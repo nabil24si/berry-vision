@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Berry Classification System - Strawberry, Blueberry, Blackberry">
+  <meta name="author" content="Berry Classification Team">
+  <title>Berry Classification System</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/berry-system.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#dashboard" onclick="navigateTo('dashboard')">
+        <strong>🍓 Berry Classification</strong>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#dashboard" onclick="navigateTo('dashboard')">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#architecture" onclick="navigateTo('architecture')">Architecture</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#upload" onclick="navigateTo('upload')">Analyze</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#history" onclick="navigateTo('history')">History</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="main-container">
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- PAGE 1: DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <div class="container py-5">
+        <h1 class="display-4 mb-4 text-center">Welcome to Berry Classification Dashboard</h1>
+        
+        <!-- Stats Cards Row -->
+        <div class="row mb-4">
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="stat-card">
+              <div class="stat-icon">📊</div>
+              <h5>Total Analyzed</h5>
+              <p class="stat-value" id="total-analyzed">145</p>
+              <small>images processed</small>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="stat-card">
+              <div class="stat-icon">🍓</div>
+              <h5>Strawberry</h5>
+              <p class="stat-value" id="count-strawberry">52</p>
+              <small>predictions</small>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="stat-card">
+              <div class="stat-icon">🫐</div>
+              <h5>Blueberry</h5>
+              <p class="stat-value" id="count-blueberry">48</p>
+              <small>predictions</small>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="stat-card">
+              <div class="stat-icon">🫘</div>
+              <h5>Blackberry</h5>
+              <p class="stat-value" id="count-blackberry">45</p>
+              <small>predictions</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+              <h4 class="mb-3">Prediction Distribution</h4>
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+              <h4 class="mb-3">Weekly Analysis Trend</h4>
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-5">
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('upload')">Start Analyzing Images</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: ARCHITECTURE -->
+    <section id="page-architecture" class="page">
+      <div class="container py-5">
+        <h1 class="display-4 mb-5 text-center">System Architecture & Flowchart</h1>
+        
+        <div class="row mb-5">
+          <div class="col-lg-12">
+            <p class="lead text-center mb-4">
+              This system classifies berry images using Convolutional Neural Network (CNN) technology.
+              Below is the comprehensive workflow from data collection to deployment.
+            </p>
+          </div>
+        </div>
+
+        <!-- Architecture Steps -->
+        <div class="architecture-timeline">
+          <!-- Step 1 -->
+          <div class="timeline-item">
+            <div class="timeline-marker step-1">1</div>
+            <div class="timeline-content">
+              <h4>Dataset Engineering</h4>
+              <p>Collection of berry images, data understanding, preprocessing (resizing to uniform format for model compatibility)</p>
+              <ul>
+                <li>Gather images of Strawberry, Blueberry, and Blackberry</li>
+                <li>Perform exploratory data analysis (EDA)</li>
+                <li>Standardize image dimensions to 224x224 pixels</li>
+                <li>Data augmentation and normalization</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="timeline-item">
+            <div class="timeline-marker step-2">2</div>
+            <div class="timeline-content">
+              <h4>Deep Learning Model</h4>
+              <p>Building basic CNN architecture with convolutional and pooling layers</p>
+              <ul>
+                <li>Design CNN model without transfer learning</li>
+                <li>Layers: Conv → ReLU → MaxPool → Flatten → Dense</li>
+                <li>Optimizer: Adam | Loss: Categorical Cross-Entropy</li>
+                <li>Training on GPU with batch processing</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="timeline-item">
+            <div class="timeline-marker step-3">3</div>
+            <div class="timeline-content">
+              <h4>Backend System</h4>
+              <p>Image processing logic, MVC architecture, and API communication with CNN model</p>
+              <ul>
+                <li>Python Flask/FastAPI server</li>
+                <li>RESTful API endpoints for predictions</li>
+                <li>Model serving and inference</li>
+                <li>Request validation and error handling</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="timeline-item">
+            <div class="timeline-marker step-4">4</div>
+            <div class="timeline-content">
+              <h4>Frontend System</h4>
+              <p>Interactive dashboard interface for users to upload images and receive predictions</p>
+              <ul>
+                <li>Responsive HTML5/Bootstrap interface</li>
+                <li>Real-time image preview before analysis</li>
+                <li>Interactive charts and statistics</li>
+                <li>Prediction result visualization</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="timeline-item">
+            <div class="timeline-marker step-5">5</div>
+            <div class="timeline-content">
+              <h4>Deployment</h4>
+              <p>System implementation on local server or cloud platform for user accessibility</p>
+              <ul>
+                <li>Deploy on local server or cloud (AWS, GCP, Heroku)</li>
+                <li>Environment configuration and setup</li>
+                <li>API endpoint exposure and documentation</li>
+                <li>Monitoring and logging system</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Diagram Section -->
+        <div class="row mt-5 pt-5 border-top">
+          <div class="col-lg-12">
+            <h3 class="mb-4">System Architecture Diagram</h3>
+            <div class="diagram-box">
+              <svg viewBox="0 0 900 300" class="architecture-svg">
+                <!-- User -->
+                <rect x="50" y="30" width="100" height="60" fill="#3498db" rx="5"/>
+                <text x="100" y="70" text-anchor="middle" fill="white" font-weight="bold">User</text>
+
+                <!-- Arrow -->
+                <path d="M 150 60 L 200 60" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+                <!-- Frontend -->
+                <rect x="200" y="30" width="120" height="60" fill="#2ecc71" rx="5"/>
+                <text x="260" y="70" text-anchor="middle" fill="white" font-weight="bold">Frontend</text>
+
+                <!-- Arrow -->
+                <path d="M 320 60 L 370 60" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+                <!-- Backend API -->
+                <rect x="370" y="30" width="120" height="60" fill="#e74c3c" rx="5"/>
+                <text x="430" y="70" text-anchor="middle" fill="white" font-weight="bold">Backend API</text>
+
+                <!-- Arrow -->
+                <path d="M 490 60 L 540 60" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+                <!-- CNN Model -->
+                <rect x="540" y="30" width="120" height="60" fill="#f39c12" rx="5"/>
+                <text x="600" y="70" text-anchor="middle" fill="white" font-weight="bold">CNN Model</text>
+
+                <!-- Result Back Arrow -->
+                <path d="M 540 100 L 430 100" stroke="#9b59b6" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)"/>
+                <text x="485" y="120" text-anchor="middle" fill="#9b59b6" font-size="12">Prediction Result</text>
+
+                <!-- Result to Frontend -->
+                <path d="M 370 100 L 260 100" stroke="#9b59b6" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)"/>
+
+                <!-- Result to User -->
+                <path d="M 200 100 L 150 100" stroke="#9b59b6" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)"/>
+
+                <!-- Database -->
+                <rect x="680" y="30" width="120" height="60" fill="#34495e" rx="5"/>
+                <text x="740" y="65" text-anchor="middle" fill="white" font-weight="bold">Database</text>
+                <text x="740" y="80" text-anchor="middle" fill="white" font-size="11">(History Logs)</text>
+
+                <!-- Arrow from Backend to DB -->
+                <path d="M 540 90 L 680 90" stroke="#7f8c8d" stroke-width="2" fill="none" marker-end="url(#arrowhead-gray)"/>
+
+                <!-- Arrow markers -->
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#333" />
+                  </marker>
+                  <marker id="arrowhead-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#9b59b6" />
+                  </marker>
+                  <marker id="arrowhead-gray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#7f8c8d" />
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-5">
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('upload')">Ready to Test the System</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: UPLOAD & ANALYZE -->
+    <section id="page-upload" class="page">
+      <div class="container py-5">
+        <h1 class="display-4 mb-4 text-center">Analyze Berry Image</h1>
+        <p class="lead text-center mb-5">Upload an image of Strawberry, Blueberry, or Blackberry for instant classification</p>
+
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <!-- Upload Area -->
+            <div class="upload-container">
+              <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📸</div>
+                <h4>Drag and Drop Your Image Here</h4>
+                <p>or click to browse from your computer</p>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+                <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                  Browse Files
+                </button>
+              </div>
+
+              <!-- Image Preview -->
+              <div id="previewContainer" style="display: none; margin-top: 20px;">
+                <h5>Selected Image</h5>
+                <div class="preview-box">
+                  <img id="previewImage" src="" alt="Preview" style="max-width: 100%; max-height: 300px;">
+                </div>
+                <p id="fileName" style="margin-top: 10px; color: #666;"></p>
+              </div>
+
+              <!-- Action Buttons -->
+              <div id="actionButtons" style="display: none; margin-top: 20px; text-align: center;">
+                <button class="btn btn-primary btn-lg" id="analyzeBtn" onclick="analyzeImage()">
+                  <span id="analyzeBtnText">Analyze Image</span>
+                  <span id="analyzeBtnSpinner" style="display: none;"> <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>
+                </button>
+                <button class="btn btn-secondary ms-2" onclick="resetUpload()">Change Image</button>
+              </div>
+            </div>
+
+            <!-- Processing Message -->
+            <div id="processingMessage" style="display: none; text-align: center; margin-top: 20px;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Processing your image... (max 10 seconds)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: PREDICTION RESULT -->
+    <section id="page-result" class="page">
+      <div class="container py-5">
+        <h1 class="display-4 mb-4 text-center">Prediction Result</h1>
+
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <!-- Result Image -->
+            <div class="row mb-4">
+              <div class="col-md-5">
+                <div class="result-image-box">
+                  <img id="resultImage" src="" alt="Analyzed Image" style="max-width: 100%; border-radius: 8px;">
+                </div>
+              </div>
+
+              <!-- Result Details -->
+              <div class="col-md-7">
+                <div class="result-details">
+                  <h3>Classification Result</h3>
+                  
+                  <!-- Predicted Class -->
+                  <div class="result-item mb-4">
+                    <label>Predicted Class</label>
+                    <h2 id="resultClass" class="result-class-name">--</h2>
+                    <p id="resultEmoji" style="font-size: 3em; margin: 10px 0;"></p>
+                  </div>
+
+                  <!-- Confidence Score -->
+                  <div class="result-item mb-4">
+                    <label>Confidence Score</label>
+                    <div class="confidence-display">
+                      <div class="confidence-value">
+                        <span id="confidencePercent" class="confidence-number">0%</span>
+                      </div>
+                      <div class="confidence-bar">
+                        <div id="confidenceBarFill" class="confidence-bar-fill" style="width: 0%;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="mt-4">
+                    <button class="btn btn-primary" onclick="navigateTo('upload')">Analyze Another Image</button>
+                    <button class="btn btn-secondary ms-2" onclick="navigateTo('history')">View History</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Probability Matrix -->
+            <div class="row mt-5">
+              <div class="col-lg-12">
+                <h4 class="mb-3">Probability Distribution</h4>
+                <div class="probability-matrix">
+                  <table class="table table-bordered">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>Berry Type</th>
+                        <th>Confidence</th>
+                        <th>Visualization</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>🍓 Strawberry</strong></td>
+                        <td id="prob-strawberry">--</td>
+                        <td>
+                          <div class="probability-bar">
+                            <div id="probBar-strawberry" class="prob-bar-fill" style="background-color: #e74c3c; width: 0%;"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>🫐 Blueberry</strong></td>
+                        <td id="prob-blueberry">--</td>
+                        <td>
+                          <div class="probability-bar">
+                            <div id="probBar-blueberry" class="prob-bar-fill" style="background-color: #3498db; width: 0%;"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>🫘 Blackberry</strong></td>
+                        <td id="prob-blackberry">--</td>
+                        <td>
+                          <div class="probability-bar">
+                            <div id="probBar-blackberry" class="prob-bar-fill" style="background-color: #2c3e50; width: 0%;"></div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5: HISTORY ANALYTICS -->
+    <section id="page-history" class="page">
+      <div class="container py-5">
+        <h1 class="display-4 mb-4 text-center">Prediction History & Analytics</h1>
+
+        <!-- Charts Row -->
+        <div class="row mb-5">
+          <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+              <h4 class="mb-3">Weekly Analysis Count</h4>
+              <canvas id="historyTrendChart"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+              <h4 class="mb-3">Classification Distribution</h4>
+              <canvas id="historyDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="row">
+          <div class="col-lg-12">
+            <h4 class="mb-3">Recent Predictions</h4>
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Date/Time</th>
+                    <th>Image</th>
+                    <th>Predicted Class</th>
+                    <th>Confidence</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <!-- Will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            <div id="noHistoryMessage" class="text-center text-muted py-4">
+              <p>No prediction history yet. Start by analyzing an image!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-4">
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('upload')">Analyze New Image</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+      <p>&copy; 2026 Berry Classification System. All rights reserved.</p>
+      <p><small>Powered by Convolutional Neural Network (CNN)</small></p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/berry-system.js"></script>
+</body>
+</html>

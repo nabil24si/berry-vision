@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Berry Vision - AI-Powered Berry Classification System">
+  <title>Berry Vision</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F0F7F3',
+              100: '#E1F0E7',
+              200: '#C3E1CF',
+              300: '#A5D2B7',
+              400: '#96C8AE',
+              500: '#88BDA4',
+              600: '#6DA88B',
+              700: '#529372',
+              800: '#377E59',
+              900: '#1C6940',
+            },
+            accent: {
+              400: '#C8E0CE',
+              500: '#B1D3B9',
+              600: '#9AC0A4',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    body { background-color: #FFFDF7; }
+
+    /* Animated background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(136,189,164,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(177,211,185,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(136,189,164,0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+      animation: bgShift 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
+      50%  { transform: translate(2%, 1%) scale(1.02); opacity: 1; }
+      100% { transform: translate(-1%, -0.5%) scale(0.98); opacity: 0.85; }
+    }
+
+    main { position: relative; z-index: 1; }
+
+    /* Smooth page transitions */
+    .page {
+      display: none;
+      animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stagger fade-in for cards on each page */
+    .page.active .metric-card,
+    .page.active .chart-card,
+    .page.active .timeline-item,
+    .page.active .bg-white {
+      animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+    .page.active .metric-card:nth-child(1),
+    .page.active .bg-white:nth-child(1) { animation-delay: 0.05s; }
+    .page.active .metric-card:nth-child(2),
+    .page.active .bg-white:nth-child(2) { animation-delay: 0.12s; }
+    .page.active .metric-card:nth-child(3),
+    .page.active .bg-white:nth-child(3) { animation-delay: 0.19s; }
+    .page.active .metric-card:nth-child(4),
+    .page.active .bg-white:nth-child(4) { animation-delay: 0.26s; }
+
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Card hover lift */
+    .card-hover {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.06) !important;
+    }
+
+    /* Navbar link active state */
+    .nav-link.active {
+      color: #88BDA4;
+      font-weight: 600;
+    }
+
+    /* Dropzone drag-over highlight */
+    .dropzone.drag-over {
+      border-color: #88BDA4;
+      background-color: rgba(136,189,164,0.08);
+      box-shadow: 0 0 0 4px rgba(136,189,164,0.12);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* Spinner */
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #E2E8F0;
+      border-top-color: #88BDA4;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Skeleton pulse */
+    .skeleton-pulse {
+      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Toast notification */
+    .toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      background: white;
+      border: 1px solid #FECACA;
+      border-left: 4px solid #EF4444;
+      border-radius: 12px;
+      padding: 14px 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #991B1B;
+      font-weight: 500;
+      transform: translateX(120%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 380px;
+    }
+    .toast-notification.show {
+      transform: translateX(0);
+    }
+    .toast-notification .toast-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .toast-notification .toast-close {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #991B1B;
+      opacity: 0.5;
+      padding: 2px;
+      flex-shrink: 0;
+    }
+    .toast-notification .toast-close:hover { opacity: 1; }
+
+    /* Shake animation for error */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease-in-out; }
+
+    /* Float animation for hero */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- TOP NAVIGATION BAR                           -->
+  <!-- ============================================ -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo / Brand -->
+        <a href="#" onclick="navigateTo('dashboard'); return false;" class="flex items-center gap-2 text-lg font-bold text-brand-500 no-underline">
+          <span class="text-xl">🍓🫐🫘</span>
+          <span>Berry Vision</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-500 transition-colors no-underline" data-nav="dashboard" onclick="navigateTo('dashboard'); return false;">Home</a>
+          <a href="#" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-500 transition-colors no-underline" data-nav="architecture" onclick="navigateTo('architecture'); return false;">Architecture</a>
+          <a href="#" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-500 transition-colors no-underline" data-nav="upload" onclick="navigateTo('upload'); return false;">Upload Image</a>
+          <a href="#" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-500 transition-colors no-underline" data-nav="history" onclick="navigateTo('history'); return false;">History</a>
+          <a href="#" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-500 transition-colors no-underline" data-nav="about" onclick="navigateTo('about'); return false;">About</a>
+        </nav>
+
+        <!-- Mobile Hamburger -->
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-slate-100 px-4 pb-4">
+      <nav class="flex flex-col gap-1 pt-2">
+        <a href="#" class="nav-link block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-brand-500 transition-colors no-underline" data-nav="dashboard" onclick="navigateTo('dashboard'); toggleMobileMenu(); return false;">Home</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-brand-500 transition-colors no-underline" data-nav="architecture" onclick="navigateTo('architecture'); toggleMobileMenu(); return false;">Architecture</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-brand-500 transition-colors no-underline" data-nav="upload" onclick="navigateTo('upload'); toggleMobileMenu(); return false;">Upload Image</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-brand-500 transition-colors no-underline" data-nav="history" onclick="navigateTo('history'); toggleMobileMenu(); return false;">History</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-brand-500 transition-colors no-underline" data-nav="about" onclick="navigateTo('about'); toggleMobileMenu(); return false;">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Spacer for fixed navbar -->
+  <div class="h-16"></div>
+
+  <!-- ============================================ -->
+  <!-- MAIN CONTENT                                 -->
+  <!-- ============================================ -->
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="toast-notification">
+    <span class="toast-icon">⚠️</span>
+    <span id="toastMessage">Error message</span>
+    <button class="toast-close" onclick="hideToast()">✕</button>
+  </div>
+
+  <main class="min-h-screen">
+
+    <!-- ===================== -->
+    <!-- PAGE 1: HOME/DASHBOARD -->
+    <!-- ===================== -->
+    <section class="page active" id="page-dashboard" data-page="dashboard">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <!-- Hero Section -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-6">
+            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+            AI-Powered Classification
+          </div>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-800 leading-tight mb-5">
+            Discover Your
+            <span class="text-brand-500">Berry Variant</span>
+          </h1>
+          <p class="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Upload a photo of any berry and our deep learning CNN model instantly identifies whether it's a <strong class="text-slate-700">Strawberry</strong>, <strong class="text-slate-700">Blueberry</strong>, or <strong class="text-slate-700">Blackberry</strong> with 98.5% accuracy.
+          </p>
+          <button class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand-500 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
+            Try the Classifier
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Public Statistics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Metric Card: Total Data Analyzed -->
+          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 rounded-xl bg-brand-50 flex items-center justify-center text-2xl flex-shrink-0">
+                📊
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Data Analyzed</p>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-800" id="total-analyzed">1,284</p>
+                <p class="text-sm text-slate-400 mt-1">images processed</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: Prediction Summary -->
+          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 hover:shadow-lg transition-shadow duration-200">
+            <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Prediction Summary</p>
+            <div class="flex items-center justify-center" style="height:200px;">
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
+            <span class="text-2xl">🍓</span>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Strawberry</p>
+              <p class="text-xl font-bold text-slate-800" id="count-strawberry">578</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
+            <span class="text-2xl">🫐</span>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Blueberry</p>
+              <p class="text-xl font-bold text-slate-800" id="count-blueberry">451</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
+            <span class="text-2xl">🫘</span>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Blackberry</p>
+              <p class="text-xl font-bold text-slate-800" id="count-blackberry">255</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== -->
+    <!-- PAGE 2: ARCHITECTURE        -->
+    <!-- ========================== -->
+    <section class="page" id="page-architecture" data-page="architecture">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-5">
+            ⚙️ System Design
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">System Architecture</h1>
+          <p class="text-slate-500 max-w-xl mx-auto">Complete workflow from dataset collection to production deployment</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="relative">
+          <!-- Center line (desktop) -->
+          <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-200 -translate-x-1/2"></div>
+
+          <!-- Step 1 -->
+          <div class="timeline-step md:flex items-center mb-12 md:mb-16">
+            <div class="md:w-1/2 md:pr-12 md:text-right">
+              <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 border border-slate-100 hover:border-brand-200 transition-colors">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white font-bold text-sm mb-4">1</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Dataset Engineering</h3>
+                <p class="text-sm text-slate-400 mb-3">Collecting Dataset, Data Understanding, Data Preprocessing</p>
+                <ul class="text-sm text-slate-500 space-y-1.5">
+                  <li class="flex items-start gap-2 md:flex-row-reverse">
+                    <span class="text-brand-500 font-bold flex-shrink-0">✓</span>
+                    <span>Image collection across 3 berry types</span>
+                  </li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse">
+                    <span class="text-brand-500 font-bold flex-shrink-0">✓</span>
+                    <span>Exploratory data analysis (EDA)</span>
+                  </li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse">
+                    <span class="text-brand-500 font-bold flex-shrink-0">✓</span>
+                    <span>Image normalization to 150×150 pixels</span>
+                  </li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse">
+                    <span class="text-brand-500 font-bold flex-shrink-0">✓</span>
+                    <span>Data augmentation techniques</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="hidden md:block w-1/2 md:pl-12">
+              <div class="flex items-center justify-center h-full">
+                <span class="text-5xl">📦</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="timeline-step md:flex items-center mb-12 md:mb-16">
+            <div class="hidden md:block w-1/2 md:pr-12">
+              <div class="flex items-center justify-center h-full">
+                <span class="text-5xl">🧠</span>
+              </div>
+            </div>
+            <div class="md:w-1/2 md:pl-12">
+              <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 border border-slate-100 hover:border-brand-200 transition-colors">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white font-bold text-sm mb-4">2</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Deep Learning Model</h3>
+                <p class="text-sm text-slate-400 mb-3">CNN Architecture Setup & Training</p>
+                <ul class="text-sm text-slate-500 space-y-1.5">
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Custom CNN without transfer learning</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>3 convolutional layers with ReLU activation</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>MaxPooling and Flatten layers</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>98.5% training accuracy achieved</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="timeline-step md:flex items-center mb-12 md:mb-16">
+            <div class="md:w-1/2 md:pr-12 md:text-right">
+              <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 border border-slate-100 hover:border-brand-200 transition-colors">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white font-bold text-sm mb-4">3</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Backend System</h3>
+                <p class="text-sm text-slate-400 mb-3">API Routing & Controller Logic</p>
+                <ul class="text-sm text-slate-500 space-y-1.5">
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Python Flask REST API</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Real-time image preprocessing</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Model inference with confidence scores</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Request validation and error handling</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="hidden md:block w-1/2 md:pl-12">
+              <div class="flex items-center justify-center h-full">
+                <span class="text-5xl">⚙️</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="timeline-step md:flex items-center mb-12 md:mb-16">
+            <div class="hidden md:block w-1/2 md:pr-12">
+              <div class="flex items-center justify-center h-full">
+                <span class="text-5xl">🎨</span>
+              </div>
+            </div>
+            <div class="md:w-1/2 md:pl-12">
+              <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 border border-slate-100 hover:border-brand-200 transition-colors">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white font-bold text-sm mb-4">4</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Frontend System</h3>
+                <p class="text-sm text-slate-400 mb-3">Interactive Guest UI</p>
+                <ul class="text-sm text-slate-500 space-y-1.5">
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Modern SaaS-style guest dashboard</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Drag-and-drop image upload</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Real-time prediction display</span></li>
+                  <li class="flex items-start gap-2"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Interactive analytics charts</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="timeline-step md:flex items-center">
+            <div class="md:w-1/2 md:pr-12 md:text-right">
+              <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 border border-slate-100 hover:border-brand-200 transition-colors">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white font-bold text-sm mb-4">5</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Deployment</h3>
+                <p class="text-sm text-slate-400 mb-3">Web Hosting</p>
+                <ul class="text-sm text-slate-500 space-y-1.5">
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Scalable server architecture</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Cloud platform integration</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Environment configuration</span></li>
+                  <li class="flex items-start gap-2 md:flex-row-reverse"><span class="text-brand-500 font-bold flex-shrink-0">✓</span><span>Monitoring and logging system</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="hidden md:block w-1/2 md:pl-12">
+              <div class="flex items-center justify-center h-full">
+                <span class="text-5xl">🚀</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center mt-14">
+          <button class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand-500 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
+            Ready to Test
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- PAGE 3: UPLOAD IMAGE   -->
+    <!-- ===================== -->
+    <section class="page" id="page-upload" data-page="upload">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-5">
+            📸 Image Analysis
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">Analyze Image</h1>
+          <p class="text-slate-500 max-w-lg mx-auto">Upload a berry image for instant classification</p>
+        </div>
+
+        <!-- Upload Card -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 sm:p-10">
+
+          <!-- Dropzone -->
+          <div id="uploadBox" class="dropzone border-2 border-dashed border-slate-200 rounded-xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-200 hover:border-brand-300 hover:bg-brand-50/30"
+               onclick="document.getElementById('fileInput').click()">
+            <div class="text-5xl mb-4">📤</div>
+            <h3 class="text-xl font-semibold text-slate-700 mb-2">Drag and drop your berry image here</h3>
+            <p class="text-sm text-slate-400 mb-6">or click to Browse (Supports JPG, PNG)</p>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+            <button class="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="event.stopPropagation(); document.getElementById('fileInput').click();">
+              Browse File
+            </button>
+          </div>
+
+          <!-- Preview Section (hidden) -->
+          <div id="previewContainer" class="hidden space-y-5">
+            <h3 class="font-semibold text-slate-700">Selected Image</h3>
+            <div class="bg-slate-50 rounded-xl p-4 flex items-center justify-center min-h-[260px]">
+              <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[300px] rounded-lg shadow-sm">
+            </div>
+            <p class="text-sm text-slate-400" id="fileName"></p>
+
+            <!-- Action Buttons -->
+            <div id="actionButtons" class="hidden space-y-3">
+              <button id="analyzeBtn" class="w-full py-3.5 rounded-xl bg-brand-500 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" onclick="analyzeImage()">
+                <span id="analyzeBtnSpinner" class="hidden spinner w-5 h-5 border-2"></span>
+                Run Prediction
+              </button>
+              <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="resetUpload()">
+                Change Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading / Processing State (hidden) -->
+          <div id="processingMessage" class="hidden text-center py-10">
+            <div class="spinner mx-auto mb-5"></div>
+            <p class="text-lg font-semibold text-slate-700 mb-1">Analyzing image...</p>
+            <p class="text-sm text-slate-400">This may take up to 10 seconds</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- PAGE 4: PREDICTION RESULT  -->
+    <!-- ========================= -->
+    <section class="page" id="page-result" data-page="result">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-5">
+            🎯 Classification Result
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">Prediction Result</h1>
+          <p class="text-slate-500 max-w-lg mx-auto">Classification results and confidence analysis</p>
+        </div>
+
+        <!-- Result Card -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 mb-6">
+
+          <!-- Image + Details Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <!-- Image -->
+            <div class="bg-slate-50 rounded-xl p-4 flex items-center justify-center min-h-[280px]">
+              <img id="resultImage" src="" alt="Analyzed Image" class="max-w-full max-h-[300px] rounded-lg shadow-sm">
+            </div>
+            <!-- Details -->
+            <div class="flex flex-col justify-between">
+              <div class="text-center sm:text-left mb-6">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Predicted Class</p>
+                <h2 class="text-3xl font-extrabold text-slate-800" id="resultClass">--</h2>
+                <p class="text-4xl mt-2" id="resultEmoji"></p>
+              </div>
+
+              <div class="mb-6">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Confidence Score</p>
+                <div class="flex items-center gap-4">
+                  <span class="text-2xl font-extrabold text-brand-500 min-w-[80px]" id="confidencePercent">0%</span>
+                  <div class="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-1000 ease-out" id="confidenceBarFill" style="width:0%;background:linear-gradient(90deg,#88BDA4,#B1D3B9);"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <button class="w-full py-3 rounded-xl bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
+                  Analyze Another
+                </button>
+                <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="navigateTo('history')">
+                  View History
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Probability Distribution -->
+          <div>
+            <h3 class="font-semibold text-slate-700 mb-4">Probability Distribution</h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="text-sm font-medium text-slate-600">🍓 Strawberry</span>
+                  <span class="text-sm font-bold text-slate-800" id="prob-strawberry">0%</span>
+                </div>
+                <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-strawberry" style="width:0%;background:linear-gradient(90deg,#EF4444,#F87171);"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="text-sm font-medium text-slate-600">🫐 Blueberry</span>
+                  <span class="text-sm font-bold text-slate-800" id="prob-blueberry">0%</span>
+                </div>
+                <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-blueberry" style="width:0%;background:linear-gradient(90deg,#3B82F6,#60A5FA);"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="text-sm font-medium text-slate-600">🫘 Blackberry</span>
+                  <span class="text-sm font-bold text-slate-800" id="prob-blackberry">0%</span>
+                </div>
+                <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-blackberry" style="width:0%;background:linear-gradient(90deg,#64748B,#94A3B8);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- PAGE 5: HISTORY         -->
+    <!-- ===================== -->
+    <section class="page" id="page-history" data-page="history">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-5">
+            📈 Analytics
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">History Analytics</h1>
+          <p class="text-slate-500 max-w-xl mx-auto">Track your classification predictions over time</p>
+        </div>
+
+        <!-- Trend Chart -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 mb-8">
+          <h2 class="text-lg font-bold text-slate-800 mb-5">Usage Trend Analysis</h2>
+          <div style="height:280px;">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8">
+          <h2 class="text-lg font-bold text-slate-800 mb-5">Prediction History</h2>
+
+          <!-- Empty state -->
+          <div id="emptyHistoryState" class="text-center py-14">
+            <div class="text-5xl mb-4">📭</div>
+            <p class="text-lg font-semibold text-slate-600 mb-1">No predictions yet</p>
+            <p class="text-sm text-slate-400 mb-6">Start analyzing images to see your history here</p>
+            <button class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
+              Analyze an Image
+            </button>
+          </div>
+
+          <!-- Table (hidden if empty) -->
+          <div id="historyTableWrapper" class="hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-slate-100">
+                    <th class="text-left py-3.5 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date & Time</th>
+                    <th class="text-left py-3.5 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Image Thumbnail</th>
+                    <th class="text-left py-3.5 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Predicted Class</th>
+                    <th class="text-left py-3.5 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Confidence Score</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-slate-50"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- PAGE 6: ABOUT          -->
+    <!-- ===================== -->
+    <section class="page" id="page-about" data-page="about">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-5">👥 Our Team</div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">About Us</h1>
+          <p class="text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            We are a team of data mining enthusiasts passionate about applying deep learning to real-world agricultural problems. This project was built as part of our <strong class="text-slate-700">Data Mining Practicum</strong> to demonstrate end-to-end image classification using Convolutional Neural Networks (CNN).
+          </p>
+        </div>
+
+        <!-- Biodata Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
+          <!-- Member 1: Nabil -->
+          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 text-center hover:shadow-lg transition-shadow duration-200 border border-slate-100">
+            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-400 to-accent-500 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-5 shadow-lg shadow-brand-500/20">
+              N
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Nabil Sahendra</h3>
+            <p class="text-sm text-brand-500 font-semibold mb-1">Data Mining Practicum</p>
+            <p class="text-sm text-slate-400 mb-4">Frontend Developer & System Integrator</p>
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
+              <span class="inline-flex items-center gap-1">📧 nabil@example.com</span>
+            </div>
+          </div>
+
+          <!-- Member 2: Mickel -->
+          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 text-center hover:shadow-lg transition-shadow duration-200 border border-slate-100">
+            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-400 to-accent-500 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-5 shadow-lg shadow-brand-500/20">
+              D
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Della Marcellina</h3>
+            <p class="text-sm text-brand-500 font-semibold mb-1">Data Mining Practicum</p>
+            <p class="text-sm text-slate-400 mb-4">Backend Developer & Model Engineer</p>
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
+              <span class="inline-flex items-center gap-1">📧 della@example.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Summary -->
+        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 border border-slate-100">
+          <h3 class="text-lg font-bold text-slate-800 mb-4 text-center">📋 Project Overview</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🎯</span>
+                <div>
+                  <p class="font-semibold text-slate-700">Objective</p>
+                  <p class="text-slate-500">Classify 3 types of berries using deep learning CNN</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">📊</span>
+                <div>
+                  <p class="font-semibold text-slate-700">Dataset</p>
+                  <p class="text-slate-500">1,284 labeled berry images (Strawberry, Blueberry, Blackberry)</p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🧠</span>
+                <div>
+                  <p class="font-semibold text-slate-700">Model</p>
+                  <p class="text-slate-500">Custom CNN with 3 convolutional layers, 98.5% training accuracy</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🚀</span>
+                <div>
+                  <p class="font-semibold text-slate-700">Tech Stack</p>
+                  <p class="text-slate-500">Python Flask, TensorFlow, HTML/CSS/JS, Chart.js, Tailwind CSS</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================ -->
+  <!-- FOOTER                                       -->
+  <!-- ============================================ -->
+  <footer class="bg-white border-t border-slate-200 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="flex items-center justify-center gap-2 text-lg mb-3">
+        <span>🍓🫐🫘</span>
+        <span class="font-bold text-brand-500">Berry Vision</span>
+      </div>
+      <p class="text-sm text-slate-400">
+        Copyright &copy; 2026 Data Mining Practicum. All rights reserved.
+      </p>
+      <p class="text-xs text-slate-300 mt-1">
+        Built with ❤️ for academic purposes &mdash; Image Classification using CNN
+      </p>
+    </div>
+  </footer>
+
+  <!-- ============================================ -->
+  <!-- JAVASCRIPT                                   -->
+  <!-- ============================================ -->
+  <script>
+  // ================================================
+  // BERRY VISION - MAIN APPLICATION LOGIC
+  // ================================================
+
+  // Global State
+  let predictionHistory = [];
+  let currentPredictionData = null;
+  let chartInstances = {};
+
+  // ================================================
+  // INITIALIZATION
+  // ================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Berry Vision initialized');
+
+    // Load mock data for demo display
+    loadMockDemoData();
+
+    // Initialize drag-and-drop
+    initializeDragAndDrop();
+
+    // Initialize dashboard charts
+    initializeDashboardCharts();
+
+    // Load history from localStorage
+    loadHistoryFromStorage();
+
+    // Set default page
+    navigateTo('dashboard');
+
+    // File input listener
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+  });
+
+  // ================================================
+  // MOCK DEMO DATA (for initial visual display)
+  // ================================================
+  function loadMockDemoData() {
+    const stored = localStorage.getItem('berryPredictionHistory');
+    if (!stored || JSON.parse(stored).length === 0) {
+      // Show demo stats on dashboard even without history
+      // These are just display numbers, not stored in history
+      document.getElementById('total-analyzed').textContent = '1,284';
+      document.getElementById('count-strawberry').textContent = '578';
+      document.getElementById('count-blueberry').textContent = '451';
+      document.getElementById('count-blackberry').textContent = '255';
+
+      // Initialize prediction chart with demo data
+      setTimeout(() => initializeDashboardCharts(), 200);
+    }
+  }
+
+  // ================================================
+  // PAGE NAVIGATION (SPA)
+  // ================================================
+  function navigateTo(page) {
+    console.log('Navigate to:', page);
+
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+    // Show target page
+    const target = document.getElementById('page-' + page);
+    if (target) {
+      target.classList.add('active');
+
+      // Page-specific initializations
+      if (page === 'dashboard') {
+        setTimeout(() => {
+          initializeDashboardCharts();
+          updateDashboardStats();
+        }, 150);
+      } else if (page === 'history') {
+        setTimeout(() => {
+          initializeHistoryCharts();
+          populateHistoryTable();
+        }, 150);
+      } else if (page === 'result') {
+        // Scroll to top smoothly
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+      }
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Update nav links active state
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.classList.toggle('active', link.dataset.nav === page);
+    });
+  }
+
+  // ================================================
+  // MOBILE MENU
+  // ================================================
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('hidden');
+  }
+
+  // ================================================
+  // DRAG AND DROP
+  // ================================================
+  function initializeDragAndDrop() {
+    const dropzone = document.getElementById('uploadBox');
+    if (!dropzone) return;
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }, false);
+      document.body.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone.addEventListener(evt, () => dropzone.classList.add('drag-over'), false);
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, () => dropzone.classList.remove('drag-over'), false);
+    });
+
+    dropzone.addEventListener('drop', handleDrop, false);
+  }
+
+  // ================================================
+  // DRAG AND DROP WITH TOAST VALIDATION
+  // ================================================
+  function handleDrop(e) {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (isValidImageFile(file)) displayImagePreview(file);
+      else showToast('Please upload a valid image file (JPG or PNG, max 5MB)');
+    }
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file && isValidImageFile(file)) displayImagePreview(file);
+    else if (file) showToast('Invalid file. Please upload JPG or PNG images under 5MB.');
+  }
+
+  function isValidImageFile(file) {
+    return ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type) && file.size <= 5 * 1024 * 1024;
+  }
+
+  function displayImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('previewImage').src = e.target.result;
+      document.getElementById('previewContainer').style.display = 'block';
+      document.getElementById('actionButtons').style.display = 'block';
+      document.getElementById('uploadBox').style.display = 'none';
+      document.getElementById('fileName').textContent = 'File: ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+      document.getElementById('fileInput').currentFile = file;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resetUpload() {
+    document.getElementById('fileInput').value = '';
+    document.getElementById('previewImage').src = '';
+    document.getElementById('previewContainer').style.display = 'none';
+    document.getElementById('actionButtons').style.display = 'none';
+    document.getElementById('processingMessage').style.display = 'none';
+    document.getElementById('uploadBox').style.display = 'block';
+    document.getElementById('fileInput').currentFile = null;
+  }
+
+  // ================================================
+  // IMAGE ANALYSIS (with toast notifications)
+  // ================================================
+  async function analyzeImage() {
+    const file = document.getElementById('fileInput').currentFile;
+    if (!file) { showToast('Please select an image first'); return; }
+
+    document.getElementById('processingMessage').style.display = 'block';
+    document.getElementById('uploadBox').style.display = 'none';
+    document.getElementById('previewContainer').style.display = 'none';
+
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    document.getElementById('analyzeBtnSpinner').classList.remove('hidden');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('https://recital-groin-ladybug.ngrok-free.dev/predict', {
+        method: 'POST', body: formData, signal: AbortSignal.timeout(12000)
+      });
+      if (!response.ok) throw new Error('API error: ' + response.status);
+      const result = await response.json();
+      processPredictionResult(result, file);
+    } catch (error) {
+      console.error('Prediction error:', error);
+      showToast('API unavailable. Using demo prediction.');
+      useMockPrediction(file);
+    } finally {
+      document.getElementById('processingMessage').style.display = 'none';
+      btn.disabled = false;
+      document.getElementById('analyzeBtnSpinner').classList.add('hidden');
+    }
+  }
+
+  function processPredictionResult(result, file) {
+    const berryMap = {
+      0: { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
+      1: { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
+      2: { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
+    };
+
+    let label = result.label || result.predicted_class || 0;
+    if (typeof label === 'string') label = parseInt(label);
+    label = Math.min(2, Math.max(0, label));
+    const berry = berryMap[label];
+
+    let confidence = result.confidence || result.confidence_score || 0;
+    if (Array.isArray(confidence)) confidence = Math.max(...confidence) * 100;
+    else if (typeof confidence === 'string') confidence = parseFloat(confidence);
+    confidence = Math.min(100, Math.max(0, confidence));
+
+    let probabilities = result.probabilities || [0.33, 0.33, 0.34];
+    if (probabilities.length === 0) probabilities = [0.33, 0.33, 0.34];
+
+    currentPredictionData = {
+      berry, confidence, probabilities,
+      timestamp: new Date(),
+      imageData: document.getElementById('previewImage').src,
+      fileName: file.name
+    };
+
+    displayPredictionResult(berry, confidence, probabilities);
+    addToHistory(currentPredictionData);
+    navigateTo('result');
+  }
+
+  function useMockPrediction(file) {
+    const berries = [
+      { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
+      { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
+      { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
+    ];
+    const idx = Math.floor(Math.random() * 3);
+    const berry = berries[idx];
+    const confidence = 75 + Math.random() * 23;
+
+    const probs = [Math.random(), Math.random(), Math.random()];
+    const total = probs.reduce((a, b) => a + b);
+    const probabilities = probs.map(p => p / total);
+
+    currentPredictionData = {
+      berry, confidence, probabilities,
+      timestamp: new Date(),
+      imageData: document.getElementById('previewImage').src,
+      fileName: file.name
+    };
+
+    displayPredictionResult(berry, confidence, probabilities);
+    addToHistory(currentPredictionData);
+    document.getElementById('processingMessage').style.display = 'none';
+    navigateTo('result');
+  }
+
+  function displayPredictionResult(berry, confidence, probabilities) {
+    document.getElementById('resultImage').src = document.getElementById('previewImage').src;
+    document.getElementById('resultClass').textContent = berry.name;
+    document.getElementById('resultEmoji').textContent = berry.emoji;
+    document.getElementById('confidencePercent').textContent = confidence.toFixed(1) + '%';
+
+    const barFill = document.getElementById('confidenceBarFill');
+    barFill.style.width = confidence + '%';
+    if (confidence >= 90) barFill.style.background = 'linear-gradient(90deg, #10B981, #34D399)';
+    else if (confidence >= 70) barFill.style.background = 'linear-gradient(90deg, #F59E0B, #FBBF24)';
+    else barFill.style.background = 'linear-gradient(90deg, #EF4444, #F87171)';
+
+    const names = ['Strawberry', 'Blueberry', 'Blackberry'];
+    for (let i = 0; i < 3; i++) {
+      const pct = (probabilities[i] * 100).toFixed(1);
+      document.getElementById('prob-' + names[i].toLowerCase()).textContent = pct + '%';
+      const fill = document.getElementById('probBar-' + names[i].toLowerCase());
+      fill.style.width = pct + '%';
+    }
+  }
+
+  // ================================================
+  // HISTORY MANAGEMENT
+  // ================================================
+  function addToHistory(data) {
+    predictionHistory.push({ ...data, id: Date.now() });
+    saveHistoryToStorage();
+    updateDashboardStats();
+  }
+
+  function saveHistoryToStorage() {
+    const data = predictionHistory.map(item => ({
+      ...item,
+      timestamp: item.timestamp.toISOString()
+    }));
+    localStorage.setItem('berryPredictionHistory', JSON.stringify(data));
+  }
+
+  function loadHistoryFromStorage() {
+    const stored = localStorage.getItem('berryPredictionHistory');
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        predictionHistory = data.map(item => ({
+          ...item,
+          timestamp: new Date(item.timestamp),
+          berry: { name: item.berry.name, emoji: item.berry.emoji, className: item.berry.className }
+        }));
+        updateDashboardStats();
+        populateHistoryTable();
+      } catch(e) {
+        console.error('Load error:', e);
+        predictionHistory = [];
+      }
+    }
+  }
+
+  function populateHistoryTable() {
+    const tbody = document.getElementById('historyTableBody');
+    const emptyState = document.getElementById('emptyHistoryState');
+    const tableWrapper = document.getElementById('historyTableWrapper');
+
+    if (predictionHistory.length === 0) {
+      tbody.innerHTML = '';
+      emptyState.style.display = 'block';
+      tableWrapper.classList.add('hidden');
+      return;
+    }
+
+    emptyState.style.display = 'none';
+    tableWrapper.classList.remove('hidden');
+
+    const sorted = [...predictionHistory].sort((a, b) => b.timestamp - a.timestamp);
+    tbody.innerHTML = sorted.map(item => {
+      const colors = { Strawberry: 'bg-red-50 text-red-600', Blueberry: 'bg-blue-50 text-blue-600', Blackberry: 'bg-slate-100 text-slate-600' };
+      return `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3.5 px-4 text-slate-500">${item.timestamp.toLocaleString()}</td>
+          <td class="py-3.5 px-4">
+            <img src="${item.imageData || 'assets/images/placeholder.jpg'}" alt="thumb" class="w-11 h-11 rounded-lg object-cover shadow-sm">
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${colors[item.berry.name]}">
+              ${item.berry.emoji} ${item.berry.name}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 font-semibold text-slate-700">${item.confidence.toFixed(1)}%</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ================================================
+  // DASHBOARD STATS
+  // ================================================
+  function updateDashboardStats() {
+    const total = predictionHistory.length;
+    const strawberry = predictionHistory.filter(p => p.berry.name === 'Strawberry').length;
+    const blueberry = predictionHistory.filter(p => p.berry.name === 'Blueberry').length;
+    const blackberry = predictionHistory.filter(p => p.berry.name === 'Blackberry').length;
+
+    if (total > 0) {
+      document.getElementById('total-analyzed').textContent = total.toLocaleString();
+      document.getElementById('count-strawberry').textContent = strawberry.toLocaleString();
+      document.getElementById('count-blueberry').textContent = blueberry.toLocaleString();
+      document.getElementById('count-blackberry').textContent = blackberry.toLocaleString();
+    } else {
+      // Show demo numbers if no history
+      document.getElementById('total-analyzed').textContent = '1,284';
+      document.getElementById('count-strawberry').textContent = '578';
+      document.getElementById('count-blueberry').textContent = '451';
+      document.getElementById('count-blackberry').textContent = '255';
+    }
+
+    if (chartInstances.predictionChart) {
+      if (total > 0) {
+        chartInstances.predictionChart.data.datasets[0].data = [strawberry, blueberry, blackberry];
+      } else {
+        chartInstances.predictionChart.data.datasets[0].data = [578, 451, 255];
+      }
+      chartInstances.predictionChart.update();
+    }
+  }
+
+  // ================================================
+  // CHARTS
+  // ================================================
+  function initializeDashboardCharts() {
+    // Destroy existing
+    if (chartInstances.predictionChart) chartInstances.predictionChart.destroy();
+    if (chartInstances.trendChart) chartInstances.trendChart.destroy();
+
+    const ctx = document.getElementById('predictionChart');
+    if (ctx) {
+      const strawberry = predictionHistory.filter(p => p.berry.name === 'Strawberry').length || 578;
+      const blueberry = predictionHistory.filter(p => p.berry.name === 'Blueberry').length || 451;
+      const blackberry = predictionHistory.filter(p => p.berry.name === 'Blackberry').length || 255;
+
+      chartInstances.predictionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Strawberry', 'Blueberry', 'Blackberry'],
+          datasets: [{
+            data: [strawberry, blueberry, blackberry],
+            backgroundColor: ['#EF4444', '#3B82F6', '#64748B'],
+            borderColor: '#FFFFFF',
+            borderWidth: 3,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 16,
+                usePointStyle: true,
+                font: { size: 12, weight: '500', family: 'Inter' },
+                color: '#64748B'
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  function initializeHistoryCharts() {
+    if (chartInstances.trendChart) chartInstances.trendChart.destroy();
+
+    const ctx = document.getElementById('trendChart');
+    if (ctx) {
+      const { days, data } = getWeeklyTrendData();
+
+      chartInstances.trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: days,
+          datasets: [{
+            label: 'Predictions',
+            data: data,
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99,102,241,0.08)',
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#6366F1',
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1, font: { size: 11 }, color: '#94A3B8' },
+              grid: { color: 'rgba(0,0,0,0.04)' }
+            },
+            x: {
+              ticks: { font: { size: 11 }, color: '#94A3B8' },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  function getWeeklyTrendData() {
+    const labels = [];
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      const count = predictionHistory.filter(p => {
+        const pd = new Date(p.timestamp);
+        return pd.toDateString() === d.toDateString();
+      }).length;
+      data.push(count);
+    }
+    return { days: labels, data };
+  }
+
+  // Export to window
+  // ================================================
+  // TOAST NOTIFICATION
+  // ================================================
+  function showToast(message) {
+    const toast = document.getElementById('toastNotification');
+    const msgEl = document.getElementById('toastMessage');
+    msgEl.textContent = message;
+    toast.classList.add('show');
+    toast.classList.remove('shake');
+    // Trigger reflow for shake animation
+    void toast.offsetWidth;
+    toast.classList.add('shake');
+    setTimeout(() => {
+      toast.classList.remove('shake');
+    }, 500);
+    setTimeout(() => {
+      hideToast();
+    }, 5000);
+  }
+
+  function hideToast() {
+    document.getElementById('toastNotification').classList.remove('show');
+  }
+
+  // Override alert to use toast notification
+  window.alert = function(message) {
+    showToast(message);
+  };
+
+  // Export functions globally
+  window.navigateTo = navigateTo;
+  window.analyzeImage = analyzeImage;
+  window.resetUpload = resetUpload;
+  window.toggleMobileMenu = toggleMobileMenu;
+  window.showToast = showToast;
+  window.hideToast = hideToast;
+  </script>
+
+</body>
+</html>

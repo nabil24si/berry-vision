@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Berry Classification System - Strawberry, Blueberry, Blackberry">
+  <meta name="author" content="Berry Classification Team">
+  <title>Berry Classification System</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/berry-system-tailwind.css">
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-gray-100 min-h-screen">
+  
+  <!-- Navigation Bar -->
+  <nav class="sticky top-0 z-50 bg-gradient-to-r from-purple-900 via-purple-800 to-pink-900 shadow-2xl border-b border-purple-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onclick="navigateTo('dashboard')">
+          <span class="text-3xl">🍓🫐🫘</span>
+          <div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+              Berry AI
+            </h1>
+            <p class="text-xs text-purple-200">Classification System</p>
+          </div>
+        </div>
+
+        <!-- Menu Button (Mobile) -->
+        <button id="mobileMenuBtn" class="md:hidden text-white hover:bg-purple-700 px-3 py-2 rounded-lg transition">
+          ☰
+        </button>
+
+        <!-- Navigation Links -->
+        <ul class="hidden md:flex gap-8 items-center">
+          <li>
+            <a href="#dashboard" onclick="navigateTo('dashboard')" 
+               class="text-purple-200 hover:text-white transition-colors duration-300 font-medium">
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#architecture" onclick="navigateTo('architecture')" 
+               class="text-purple-200 hover:text-white transition-colors duration-300 font-medium">
+              Architecture
+            </a>
+          </li>
+          <li>
+            <a href="#upload" onclick="navigateTo('upload')" 
+               class="text-purple-200 hover:text-white transition-colors duration-300 font-medium">
+              Analyze
+            </a>
+          </li>
+          <li>
+            <a href="#history" onclick="navigateTo('history')" 
+               class="text-purple-200 hover:text-white transition-colors duration-300 font-medium">
+              History
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="hidden md:hidden bg-purple-900 border-b border-purple-700">
+    <div class="px-4 py-3 space-y-2">
+      <a href="#dashboard" onclick="navigateTo('dashboard'); closeMobileMenu()" 
+         class="block text-purple-200 hover:text-white px-3 py-2 rounded transition">Dashboard</a>
+      <a href="#architecture" onclick="navigateTo('architecture'); closeMobileMenu()" 
+         class="block text-purple-200 hover:text-white px-3 py-2 rounded transition">Architecture</a>
+      <a href="#upload" onclick="navigateTo('upload'); closeMobileMenu()" 
+         class="block text-purple-200 hover:text-white px-3 py-2 rounded transition">Analyze</a>
+      <a href="#history" onclick="navigateTo('history'); closeMobileMenu()" 
+         class="block text-purple-200 hover:text-white px-3 py-2 rounded transition">History</a>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    
+    <!-- PAGE 1: DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-12 animate-fade-in">
+          <h1 class="text-5xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
+            Berry Classification Dashboard
+          </h1>
+          <p class="text-xl text-purple-300">Real-time image analysis powered by AI</p>
+        </div>
+        
+        <!-- Stats Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <!-- Total Analyzed -->
+          <div class="stat-card group">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur-xl group-hover:blur-2xl opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl border border-purple-700 hover:border-purple-500 transition">
+              <div class="text-4xl mb-3">📊</div>
+              <h5 class="text-purple-200 text-sm font-semibold uppercase tracking-wide mb-2">Total Analyzed</h5>
+              <p class="text-4xl font-bold text-white" id="total-analyzed">0</p>
+              <p class="text-purple-300 text-xs mt-2">images processed</p>
+            </div>
+          </div>
+
+          <!-- Strawberry -->
+          <div class="stat-card group">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl blur-xl group-hover:blur-2xl opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl border border-purple-700 hover:border-red-500 transition">
+              <div class="text-4xl mb-3">🍓</div>
+              <h5 class="text-purple-200 text-sm font-semibold uppercase tracking-wide mb-2">Strawberry</h5>
+              <p class="text-4xl font-bold text-red-400" id="count-strawberry">0</p>
+              <p class="text-purple-300 text-xs mt-2">predictions</p>
+            </div>
+          </div>
+
+          <!-- Blueberry -->
+          <div class="stat-card group">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl blur-xl group-hover:blur-2xl opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl border border-purple-700 hover:border-blue-500 transition">
+              <div class="text-4xl mb-3">🫐</div>
+              <h5 class="text-purple-200 text-sm font-semibold uppercase tracking-wide mb-2">Blueberry</h5>
+              <p class="text-4xl font-bold text-blue-400" id="count-blueberry">0</p>
+              <p class="text-purple-300 text-xs mt-2">predictions</p>
+            </div>
+          </div>
+
+          <!-- Blackberry -->
+          <div class="stat-card group">
+            <div class="absolute inset-0 bg-gradient-to-r from-gray-700 to-gray-900 rounded-xl blur-xl group-hover:blur-2xl opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl border border-purple-700 hover:border-gray-500 transition">
+              <div class="text-4xl mb-3">🫘</div>
+              <h5 class="text-purple-200 text-sm font-semibold uppercase tracking-wide mb-2">Blackberry</h5>
+              <p class="text-4xl font-bold text-gray-400" id="count-blackberry">0</p>
+              <p class="text-purple-300 text-xs mt-2">predictions</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Prediction Distribution Chart -->
+          <div class="chart-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl blur-xl opacity-10"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+              <h4 class="text-xl font-bold text-white mb-4">Prediction Distribution</h4>
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Weekly Trend Chart -->
+          <div class="chart-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl blur-xl opacity-10"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+              <h4 class="text-xl font-bold text-white mb-4">Weekly Analysis Trend</h4>
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-12">
+          <button onclick="navigateTo('upload')" 
+                  class="group relative px-8 py-4 text-lg font-bold text-white overflow-hidden rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/50">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 transition-all duration-300 group-hover:scale-110"></div>
+            <span class="relative flex items-center justify-center gap-2">
+              Start Analyzing Images 🚀
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: ARCHITECTURE -->
+    <section id="page-architecture" class="page">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-5xl font-bold text-center bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-6">
+          System Architecture
+        </h1>
+        
+        <p class="text-center text-xl text-purple-300 mb-12 max-w-3xl mx-auto">
+          Advanced CNN technology for real-time berry classification. Our system processes images through multiple deep learning stages.
+        </p>
+
+        <!-- Architecture Timeline -->
+        <div class="space-y-8 mb-12">
+          <!-- Step 1 -->
+          <div class="timeline-item group">
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg group-hover:shadow-blue-500/50 transition">1</div>
+                <div class="w-1 h-24 bg-gradient-to-b from-blue-500 to-purple-500 mt-2"></div>
+              </div>
+              <div class="pb-8 pt-2">
+                <div class="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-xl p-6 hover:border-blue-500/60 transition">
+                  <h4 class="text-2xl font-bold text-white mb-2">Dataset Engineering</h4>
+                  <p class="text-purple-300 mb-3">Collection and preprocessing of berry images for model training</p>
+                  <ul class="space-y-1 text-purple-200 text-sm">
+                    <li>✓ Image collection (Strawberry, Blueberry, Blackberry)</li>
+                    <li>✓ Data augmentation & normalization</li>
+                    <li>✓ Standardized 150x150 pixel format</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="timeline-item group">
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg group-hover:shadow-purple-500/50 transition">2</div>
+                <div class="w-1 h-24 bg-gradient-to-b from-purple-500 to-pink-500 mt-2"></div>
+              </div>
+              <div class="pb-8 pt-2">
+                <div class="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-xl p-6 hover:border-purple-500/60 transition">
+                  <h4 class="text-2xl font-bold text-white mb-2">Deep Learning Model</h4>
+                  <p class="text-purple-300 mb-3">Custom CNN architecture with convolutional & pooling layers</p>
+                  <ul class="space-y-1 text-purple-200 text-sm">
+                    <li>✓ 3 Convolutional layers with ReLU activation</li>
+                    <li>✓ Adam optimizer & categorical cross-entropy loss</li>
+                    <li>✓ 98.5% training accuracy achieved</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="timeline-item group">
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-red-600 flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg group-hover:shadow-red-500/50 transition">3</div>
+                <div class="w-1 h-24 bg-gradient-to-b from-pink-500 to-orange-500 mt-2"></div>
+              </div>
+              <div class="pb-8 pt-2">
+                <div class="bg-gradient-to-br from-pink-900/40 to-red-900/40 border border-red-500/30 rounded-xl p-6 hover:border-red-500/60 transition">
+                  <h4 class="text-2xl font-bold text-white mb-2">Backend System</h4>
+                  <p class="text-purple-300 mb-3">Flask API server handling image processing and model inference</p>
+                  <ul class="space-y-1 text-purple-200 text-sm">
+                    <li>✓ Python Flask REST API</li>
+                    <li>✓ Image preprocessing & normalization</li>
+                    <li>✓ Real-time model inference with confidence scores</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="timeline-item group">
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-yellow-600 flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg group-hover:shadow-yellow-500/50 transition">4</div>
+                <div class="w-1 h-24 bg-gradient-to-b from-orange-500 to-green-500 mt-2"></div>
+              </div>
+              <div class="pb-8 pt-2">
+                <div class="bg-gradient-to-br from-orange-900/40 to-yellow-900/40 border border-yellow-500/30 rounded-xl p-6 hover:border-yellow-500/60 transition">
+                  <h4 class="text-2xl font-bold text-white mb-2">Frontend System</h4>
+                  <p class="text-purple-300 mb-3">Interactive dashboard with real-time visualization</p>
+                  <ul class="space-y-1 text-purple-200 text-sm">
+                    <li>✓ Modern Tailwind CSS interface</li>
+                    <li>✓ Drag-drop image upload</li>
+                    <li>✓ Interactive charts & analytics</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="timeline-item group">
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg group-hover:shadow-lg group-hover:shadow-green-500/50 transition">5</div>
+              </div>
+              <div class="pb-8 pt-2">
+                <div class="bg-gradient-to-br from-green-900/40 to-emerald-900/40 border border-green-500/30 rounded-xl p-6 hover:border-green-500/60 transition">
+                  <h4 class="text-2xl font-bold text-white mb-2">Deployment</h4>
+                  <p class="text-purple-300 mb-3">Production-ready system accessible via cloud infrastructure</p>
+                  <ul class="space-y-1 text-purple-200 text-sm">
+                    <li>✓ ngrok tunneling for local development</li>
+                    <li>✓ Scalable API endpoints</li>
+                    <li>✓ Error handling & monitoring</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-12">
+          <button onclick="navigateTo('upload')" 
+                  class="group relative px-8 py-4 text-lg font-bold text-white overflow-hidden rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/50">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 transition-all duration-300 group-hover:scale-110"></div>
+            <span class="relative flex items-center justify-center gap-2">
+              Test the System 🔬
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: UPLOAD & ANALYZE -->
+    <section id="page-upload" class="page">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-5xl font-bold text-center bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
+          Analyze Berry Image
+        </h1>
+        <p class="text-center text-xl text-purple-300 mb-12">
+          Upload an image to instantly classify Strawberry, Blueberry, or Blackberry using AI
+        </p>
+
+        <!-- Upload Container -->
+        <div class="upload-card">
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl blur-xl opacity-20"></div>
+          <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-12 rounded-2xl border-2 border-dashed border-purple-500 hover:border-purple-300 transition">
+            
+            <!-- Upload Box -->
+            <div class="upload-box" id="uploadBox">
+              <div class="text-7xl mb-4">📸</div>
+              <h4 class="text-2xl font-bold text-white mb-2">Drag and Drop Your Image</h4>
+              <p class="text-purple-300 mb-6">or click to browse from your computer</p>
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+              <button onclick="document.getElementById('fileInput').click()" 
+                      class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition">
+                Browse Files
+              </button>
+            </div>
+
+            <!-- Image Preview -->
+            <div id="previewContainer" style="display: none; margin-top: 30px;">
+              <h5 class="text-lg font-bold text-white mb-4">Selected Image</h5>
+              <div class="bg-purple-700/30 rounded-lg p-4 border border-purple-600">
+                <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-80 mx-auto rounded-lg">
+              </div>
+              <p id="fileName" style="margin-top: 15px; color: #c4b5fd;"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div id="actionButtons" style="display: none; margin-top: 30px; text-align: center;">
+              <button class="px-8 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-red-500/50 transition mr-3 inline-flex items-center gap-2" 
+                      id="analyzeBtn" onclick="analyzeImage()">
+                <span id="analyzeBtnText">Analyze Image</span>
+                <span id="analyzeBtnSpinner" style="display: none;" class="animate-spin">⏳</span>
+              </button>
+              <button class="px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold rounded-lg hover:shadow-lg transition" 
+                      onclick="resetUpload()">
+                Change Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Processing Message -->
+          <div id="processingMessage" style="display: none; text-align: center; margin-top: 30px;">
+            <div class="inline-block">
+              <div class="w-16 h-16 border-4 border-purple-500 border-t-pink-500 rounded-full animate-spin mx-auto mb-4"></div>
+              <p class="text-xl text-purple-300 font-semibold">Processing your image...</p>
+              <p class="text-sm text-purple-400">(max 10 seconds)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: PREDICTION RESULT -->
+    <section id="page-result" class="page">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-5xl font-bold text-center bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-12">
+          Prediction Result
+        </h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Result Image -->
+          <div class="result-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl blur-xl opacity-20"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+              <img id="resultImage" src="" alt="Analyzed Image" class="w-full rounded-xl shadow-2xl">
+            </div>
+          </div>
+
+          <!-- Result Details -->
+          <div class="result-details-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl blur-xl opacity-20"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700 space-y-6">
+              <div>
+                <h3 class="text-lg text-purple-300 font-semibold uppercase tracking-wide mb-2">Classification Result</h3>
+                <h2 id="resultClass" class="text-5xl font-black bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                  --
+                </h2>
+                <p id="resultEmoji" style="font-size: 4rem; margin: 10px 0;"></p>
+              </div>
+
+              <!-- Confidence Score -->
+              <div>
+                <label class="text-lg text-purple-300 font-semibold uppercase tracking-wide mb-3 block">Confidence Score</label>
+                <div class="space-y-2">
+                  <div class="flex items-end gap-2">
+                    <span id="confidencePercent" class="text-4xl font-bold text-white">0%</span>
+                  </div>
+                  <div class="w-full h-4 bg-purple-700 rounded-full overflow-hidden border border-purple-600">
+                    <div id="confidenceBarFill" class="h-full w-0 transition-all duration-500 rounded-full bg-gradient-to-r from-green-400 to-blue-500"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="pt-4 space-y-3">
+                <button onclick="navigateTo('upload')" 
+                        class="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-red-500/50 transition">
+                  Analyze Another Image
+                </button>
+                <button onclick="navigateTo('history')" 
+                        class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition">
+                  View History
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Probability Matrix -->
+        <div class="probability-card">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-20"></div>
+          <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+            <h4 class="text-2xl font-bold text-white mb-6">Probability Distribution</h4>
+            <div class="space-y-6">
+              <!-- Strawberry -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-lg font-semibold text-white">🍓 Strawberry</span>
+                  <span id="prob-strawberry" class="text-2xl font-bold text-red-400">0%</span>
+                </div>
+                <div class="w-full h-3 bg-purple-700 rounded-full overflow-hidden border border-red-500/30">
+                  <div id="probBar-strawberry" class="h-full w-0 transition-all duration-500 bg-gradient-to-r from-red-400 to-red-600 rounded-full"></div>
+                </div>
+              </div>
+
+              <!-- Blueberry -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-lg font-semibold text-white">🫐 Blueberry</span>
+                  <span id="prob-blueberry" class="text-2xl font-bold text-blue-400">0%</span>
+                </div>
+                <div class="w-full h-3 bg-purple-700 rounded-full overflow-hidden border border-blue-500/30">
+                  <div id="probBar-blueberry" class="h-full w-0 transition-all duration-500 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
+                </div>
+              </div>
+
+              <!-- Blackberry -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-lg font-semibold text-white">🫘 Blackberry</span>
+                  <span id="prob-blackberry" class="text-2xl font-bold text-gray-400">0%</span>
+                </div>
+                <div class="w-full h-3 bg-purple-700 rounded-full overflow-hidden border border-gray-500/30">
+                  <div id="probBar-blackberry" class="h-full w-0 transition-all duration-500 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5: HISTORY ANALYTICS -->
+    <section id="page-history" class="page">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-5xl font-bold text-center bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-12">
+          Prediction History & Analytics
+        </h1>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Weekly Trend Chart -->
+          <div class="chart-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl blur-xl opacity-20"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+              <h4 class="text-xl font-bold text-white mb-4">Weekly Analysis Count</h4>
+              <canvas id="historyTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Distribution Chart -->
+          <div class="chart-card">
+            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl blur-xl opacity-20"></div>
+            <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+              <h4 class="text-xl font-bold text-white mb-4">Classification Distribution</h4>
+              <canvas id="historyDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="history-table-card">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-20"></div>
+          <div class="relative bg-gradient-to-br from-purple-900 to-purple-800 p-8 rounded-2xl border border-purple-700">
+            <h4 class="text-2xl font-bold text-white mb-6">Recent Predictions</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-purple-600 bg-purple-800/50">
+                    <th class="px-4 py-3 text-left text-purple-200 font-semibold">Date/Time</th>
+                    <th class="px-4 py-3 text-left text-purple-200 font-semibold">Image</th>
+                    <th class="px-4 py-3 text-left text-purple-200 font-semibold">Predicted Class</th>
+                    <th class="px-4 py-3 text-left text-purple-200 font-semibold">Confidence</th>
+                    <th class="px-4 py-3 text-left text-purple-200 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-purple-700">
+                  <!-- Will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            <div id="noHistoryMessage" class="text-center py-8 text-purple-400">
+              <p class="text-lg">📭 No prediction history yet.</p>
+              <p class="text-sm">Start by analyzing an image!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mt-12">
+          <button onclick="navigateTo('upload')" 
+                  class="group relative px-8 py-4 text-lg font-bold text-white overflow-hidden rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/50">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 transition-all duration-300 group-hover:scale-110"></div>
+            <span class="relative flex items-center justify-center gap-2">
+              Analyze New Image 📸
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-purple-900 via-purple-800 to-pink-900 text-white text-center py-8 mt-16 border-t border-purple-700">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="text-lg font-semibold">&copy; 2026 Berry Classification System. All rights reserved.</p>
+      <p class="text-purple-300 text-sm mt-2">Powered by Convolutional Neural Network (CNN) | <span class="text-purple-400">Advanced AI Technology</span></p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/berry-system.js"></script>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    });
+
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

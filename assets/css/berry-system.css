@@ -1,0 +1,840 @@
+/* ================================================
+   BERRY CLASSIFICATION SYSTEM - MAIN STYLESHEET
+   ================================================ */
+
+:root {
+  --primary-color: #3498db;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --dark-color: #2c3e50;
+  --light-color: #ecf0f1;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================
+   GLOBAL STYLES
+   ================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* ================================================
+   NAVIGATION BAR
+   ================================================ */
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.nav-link {
+  font-weight: 500;
+  margin-left: 1rem;
+  transition: all 0.3s ease;
+  color: #ccc !important;
+}
+
+.nav-link:hover {
+  color: var(--primary-color) !important;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* ================================================
+   PAGE CONTAINER & SECTIONS
+   ================================================ */
+
+.main-container {
+  min-height: calc(100vh - 200px);
+  padding: 0;
+}
+
+.page {
+  display: none;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================
+   DASHBOARD PAGE STYLES
+   ================================================ */
+
+.stat-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  transition: all 0.3s ease;
+  border-top: 4px solid var(--primary-color);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card h5 {
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0.5rem 0;
+}
+
+.stat-card small {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.chart-container {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+}
+
+.chart-container h4 {
+  color: var(--dark-color);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.chart-container canvas {
+  max-height: 300px;
+}
+
+/* ================================================
+   ARCHITECTURE PAGE STYLES
+   ================================================ */
+
+.architecture-timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.architecture-timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-color), var(--warning-color));
+}
+
+.timeline-item {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+  margin-left: 52%;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+  margin-right: 52%;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  z-index: 2;
+  top: 0;
+}
+
+.timeline-marker.step-1 { background: #e74c3c; }
+.timeline-marker.step-2 { background: #f39c12; }
+.timeline-marker.step-3 { background: #3498db; }
+.timeline-marker.step-4 { background: #2ecc71; }
+.timeline-marker.step-5 { background: #9b59b6; }
+
+.timeline-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.timeline-content h4 {
+  color: var(--dark-color);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.timeline-content p {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.timeline-content ul {
+  margin-left: 1.5rem;
+  color: #666;
+}
+
+.timeline-content li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.diagram-box {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  overflow-x: auto;
+}
+
+.architecture-svg {
+  width: 100%;
+  height: auto;
+  min-height: 250px;
+}
+
+/* ================================================
+   UPLOAD PAGE STYLES
+   ================================================ */
+
+.upload-container {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.upload-box {
+  border: 3px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f0f7ff;
+}
+
+.upload-box:hover {
+  border-color: var(--warning-color);
+  background: #fff8f0;
+  transform: scale(1.02);
+}
+
+.upload-box.drag-over {
+  border-color: var(--success-color);
+  background: #f0fff4;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.upload-box h4 {
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.upload-box p {
+  color: #999;
+  margin-bottom: 1.5rem;
+}
+
+.preview-box {
+  background: #f5f5f5;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+#actionButtons button {
+  min-width: 150px;
+}
+
+#processingMessage {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ================================================
+   RESULT PAGE STYLES
+   ================================================ */
+
+.result-image-box {
+  background: #f5f5f5;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.result-image-box img {
+  max-width: 100%;
+  max-height: 400px;
+  box-shadow: var(--box-shadow);
+}
+
+.result-details {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  height: 100%;
+}
+
+.result-details h3 {
+  color: var(--dark-color);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.result-item {
+  margin-bottom: 1.5rem;
+}
+
+.result-item label {
+  display: block;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.result-class-name {
+  color: var(--primary-color);
+  font-size: 2rem;
+  margin: 0;
+}
+
+.confidence-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.confidence-value {
+  min-width: 80px;
+}
+
+.confidence-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--warning-color);
+}
+
+.confidence-bar {
+  flex: 1;
+  height: 30px;
+  background: #e0e0e0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+  border-radius: 15px;
+  transition: width 0.6s ease;
+}
+
+.probability-matrix {
+  overflow-x: auto;
+}
+
+.probability-matrix table {
+  margin-bottom: 0;
+}
+
+.probability-matrix th,
+.probability-matrix td {
+  vertical-align: middle;
+  padding: 1rem;
+}
+
+.probability-bar {
+  height: 25px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.prob-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ================================================
+   HISTORY PAGE STYLES
+   ================================================ */
+
+.table-responsive {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.table {
+  background: white;
+  margin-bottom: 0;
+}
+
+.table thead {
+  background: var(--dark-color);
+}
+
+.table-dark th {
+  border: none;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tbody tr:hover {
+  background: #f9f9f9;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+.table img {
+  max-width: 60px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.table .badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+}
+
+#noHistoryMessage {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* ================================================
+   BUTTONS & FORMS
+   ================================================ */
+
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+  border-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  border-color: #95a5a6;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+  border-color: #7f8c8d;
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* ================================================
+   FOOTER
+   ================================================ */
+
+footer {
+  margin-top: 5rem;
+  border-top: 1px solid #e0e0e0;
+  background: var(--dark-color);
+  color: white;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+footer small {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ================================================
+   UTILITY CLASSES
+   ================================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: #999 !important;
+}
+
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+.py-4 { padding: 1.5rem 0; }
+.py-5 { padding: 3rem 0; }
+
+.display-4 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin-bottom: 1rem;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* ================================================
+   SPINNER / LOADING ANIMATIONS
+   ================================================ */
+
+.spinner-border {
+  border-width: 3px;
+  width: 40px;
+  height: 40px;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.25em;
+}
+
+/* ================================================
+   RESPONSIVENESS - TABLET (768px)
+   ================================================ */
+
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 1.8rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  .architecture-timeline::before {
+    left: 20px;
+  }
+
+  .timeline-item:nth-child(even) .timeline-content,
+  .timeline-item:nth-child(odd) .timeline-content {
+    margin-left: 80px;
+    margin-right: 0;
+  }
+
+  .timeline-marker {
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .result-details {
+    margin-top: 1.5rem;
+  }
+
+  .confidence-display {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .confidence-bar {
+    width: 100%;
+  }
+
+  .upload-box {
+    padding: 2rem 1rem;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+
+  .chart-container {
+    padding: 1.5rem;
+  }
+
+  .diagram-box {
+    padding: 1rem;
+  }
+
+  .architecture-svg {
+    min-height: 200px;
+  }
+}
+
+/* ================================================
+   RESPONSIVENESS - MOBILE (480px)
+   ================================================ */
+
+@media (max-width: 480px) {
+  .display-4 {
+    font-size: 1.5rem;
+  }
+
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .stat-icon {
+    font-size: 1.8rem;
+  }
+
+  .btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .table {
+    font-size: 0.85rem;
+  }
+
+  .table td,
+  .table th {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .table img {
+    max-width: 40px;
+  }
+
+  .upload-box {
+    padding: 1.5rem 1rem;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+  }
+
+  .upload-box h4 {
+    font-size: 1rem;
+  }
+
+  .upload-box p {
+    font-size: 0.85rem;
+  }
+
+  .result-details {
+    padding: 1.5rem;
+  }
+
+  .result-class-name {
+    font-size: 1.5rem;
+  }
+
+  .confidence-number {
+    font-size: 1.2rem;
+  }
+
+  .chart-container {
+    padding: 1rem;
+  }
+
+  .chart-container h4 {
+    font-size: 1rem;
+  }
+
+  .timeline-content {
+    padding: 1rem;
+  }
+
+  .timeline-content h4 {
+    font-size: 0.95rem;
+  }
+
+  .timeline-content p {
+    font-size: 0.85rem;
+  }
+
+  .timeline-content li {
+    font-size: 0.8rem;
+  }
+
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-5 { margin-bottom: 1.5rem; }
+  .mt-5 { margin-top: 1.5rem; }
+  .py-5 { padding: 1.5rem 0; }
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  .navbar,
+  footer,
+  .btn,
+  .upload-box {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+
+  .page {
+    display: block !important;
+  }
+}
