@@ -185,7 +185,8 @@ async function analyzeImage() {
     formData.append('file', file);
     
     // Send to backend API
-    const response = await fetch('https://recital-groin-ladybug.ngrok-free.dev/predict', {
+    // Send to backend API
+    const response = await fetch('https://nabilsh-berry-vision.hf.space/predict', {
       method: 'POST',
       body: formData,
       timeout: 10000
