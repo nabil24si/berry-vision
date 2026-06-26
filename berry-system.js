@@ -185,11 +185,9 @@ async function analyzeImage() {
     formData.append('file', file);
     
     // Send to backend API
-    // Send to backend API
-    const response = await fetch('https://nabilsh-berry-vision.hf.space/predict', {
+   const response = await fetch('https://nabilsh-berry-vision.hf.space/predict', {
       method: 'POST',
-      body: formData,
-      timeout: 10000
+      body: formData
     });
     
     if (!response.ok) {
@@ -204,9 +202,10 @@ async function analyzeImage() {
     
   } catch (error) {
     console.error('Error during analysis:', error);
-    // Fallback: Use mock prediction for demo
-    console.log('Using mock prediction for demo');
-    useMockPrediction(file);
+    // Tampilkan peringatan jika gagal terhubung ke backend
+    alert('Gagal terhubung ke Hugging Face! Pastikan URL benar dan server sedang RUNNING.');
+    
+    // HAPUS pemanggilan useMockPrediction(file) agar tidak muncul data acak
   } finally {
     // Hide processing message and restore UI
     document.getElementById('processingMessage').style.display = 'none';
@@ -216,40 +215,33 @@ async function analyzeImage() {
 }
 
 function processPredictionResult(result, file) {
-  // Map backend labels to berry types (FIXED: matching model training order)
-  const berryMap = {
-    0: { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
-    1: { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
-    2: { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
+  console.log('Data dari server:', result); // Untuk melihat log detail di console
+
+  // 1. Mapping data buah berdasarkan nama string (teks) dari backend
+  const berryData = {
+    'Blackberry': { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
+    'Blueberry': { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
+    'Strawberry': { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
   };
   
-  // Get the predicted label (handle different response formats)
-  let predictedLabel = result.label || result.predicted_class || 0;
-  if (typeof predictedLabel === 'string') {
-    predictedLabel = parseInt(predictedLabel);
+  // 2. Ambil nama buah yang dikirim oleh Hugging Face
+  // Jika karena suatu alasan kosong, default ke Strawberry agar tidak error
+  const predictedClassStr = result.predicted_class || 'Strawberry';
+  const berry = berryData[predictedClassStr];
+  
+  // 3. Hitung format Confidence (Tingkat Keyakinan)
+  // Backend biasanya mengirim format desimal 0-1 (misal 0.98)
+  let confidence = result.confidence || 0;
+  if (confidence <= 1.0) {
+    confidence = confidence * 100; // Ubah desimal jadi persen (misal 0.98 x 100 = 98%)
   }
-  
-  // Ensure label is within range
-  predictedLabel = Math.min(2, Math.max(0, predictedLabel));
-  
-  const berry = berryMap[predictedLabel];
-  
-  // Get confidence score (handle different response formats)
-  let confidence = result.confidence || result.confidence_score || 0;
-  if (Array.isArray(confidence)) {
-    confidence = Math.max(...confidence) * 100;
-  } else if (typeof confidence === 'string') {
-    confidence = parseFloat(confidence);
-  }
+  // Pastikan angkanya tidak lebih dari 100 atau kurang dari 0
   confidence = Math.min(100, Math.max(0, confidence));
   
-  // Get probability distribution
+  // 4. Ambil array probabilitas untuk bar chart
   let probabilities = result.probabilities || [0.33, 0.33, 0.34];
-  if (probabilities.length === 0) {
-    probabilities = [0.33, 0.33, 0.34];
-  }
   
-  // Store prediction data
+  // 5. Simpan data prediksi untuk ditampilkan & masuk ke History
   currentPredictionData = {
     berry: berry,
     confidence: confidence,
@@ -259,13 +251,9 @@ function processPredictionResult(result, file) {
     fileName: document.getElementById('fileInput').currentFile.name
   };
   
-  // Update result page
+  // 6. Update halaman UI dan pindah ke halaman Result
   displayPredictionResult(berry, confidence, probabilities);
-  
-  // Add to history
   addToHistory(currentPredictionData);
-  
-  // Navigate to result page
   navigateTo('result');
 }
 
@@ -323,8 +311,8 @@ function displayPredictionResult(berry, confidence, probabilities) {
   }
   
   // Update probability distribution table
-  const berryNames = ['Strawberry', 'Blueberry', 'Blackberry'];
-  const berryEmojis = ['🍓', '🫐', '🫘'];
+  const berryNames = ['Blackberry', 'Blueberry', 'Strawberry'];  
+  const berryEmojis = ['🫘', '🫐', '🍓'];
   const berryColors = ['#e74c3c', '#3498db', '#2c3e50'];
   
   for (let i = 0; i < 3; i++) {
