@@ -621,33 +621,70 @@
           <!-- Probability Distribution -->
           <div>
             <h3 class="font-semibold text-slate-700 mb-4">Probability Distribution</h3>
-            <div class="space-y-4">
-              <div>
+            <div class="space-y-4" id="probabilityContainer">
+              <div class="prob-row" data-berry="Strawberry">
                 <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-sm font-medium text-slate-600">🍓 Strawberry</span>
-                  <span class="text-sm font-bold text-slate-800" id="prob-strawberry">0%</span>
+                  <span class="text-sm font-medium text-slate-600 prob-label" id="label-strawberry">🍓 Strawberry</span>
+                  <span class="text-sm font-bold text-slate-800 prob-value" id="prob-strawberry">0%</span>
                 </div>
                 <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-strawberry" style="width:0%;background:linear-gradient(90deg,#EF4444,#F87171);"></div>
+                  <div class="h-full rounded-full transition-all duration-700 ease-out prob-bar" id="probBar-strawberry" style="width:0%;background:linear-gradient(90deg,#EF4444,#F87171);"></div>
                 </div>
               </div>
-              <div>
+              <div class="prob-row" data-berry="Blueberry">
                 <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-sm font-medium text-slate-600">🫐 Blueberry</span>
-                  <span class="text-sm font-bold text-slate-800" id="prob-blueberry">0%</span>
+                  <span class="text-sm font-medium text-slate-600 prob-label" id="label-blueberry">🫐 Blueberry</span>
+                  <span class="text-sm font-bold text-slate-800 prob-value" id="prob-blueberry">0%</span>
                 </div>
                 <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-blueberry" style="width:0%;background:linear-gradient(90deg,#3B82F6,#60A5FA);"></div>
+                  <div class="h-full rounded-full transition-all duration-700 ease-out prob-bar" id="probBar-blueberry" style="width:0%;background:linear-gradient(90deg,#3B82F6,#60A5FA);"></div>
                 </div>
               </div>
-              <div>
+              <div class="prob-row" data-berry="Blackberry">
                 <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-sm font-medium text-slate-600">🫘 Blackberry</span>
-                  <span class="text-sm font-bold text-slate-800" id="prob-blackberry">0%</span>
+                  <span class="text-sm font-medium text-slate-600 prob-label" id="label-blackberry">🫘 Blackberry</span>
+                  <span class="text-sm font-bold text-slate-800 prob-value" id="prob-blackberry">0%</span>
                 </div>
                 <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-700 ease-out" id="probBar-blackberry" style="width:0%;background:linear-gradient(90deg,#64748B,#94A3B8);"></div>
+                  <div class="h-full rounded-full transition-all duration-700 ease-out prob-bar" id="probBar-blackberry" style="width:0%;background:linear-gradient(90deg,#64748B,#94A3B8);"></div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Berry Information Card -->
+          <div id="berryInfoCard" class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 mb-6 hidden">
+            <div class="flex items-center gap-3 mb-5">
+              <span class="text-2xl" id="infoEmoji">🍓</span>
+              <div>
+                <h3 class="text-lg font-bold text-slate-800" id="infoTitle">Berry Information</h3>
+                <p class="text-xs text-slate-400" id="infoScientificName">Scientific Name</p>
+              </div>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed mb-4" id="infoDescription"></p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="bg-slate-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-slate-400 mb-1">Color</p>
+                <p class="text-sm font-semibold text-slate-700" id="infoColor">-</p>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-slate-400 mb-1">Taste</p>
+                <p class="text-sm font-semibold text-slate-700" id="infoTaste">-</p>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-slate-400 mb-1">Shape</p>
+                <p class="text-sm font-semibold text-slate-700" id="infoShape">-</p>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3 text-center">
+                <p class="text-xs text-slate-400 mb-1">Size</p>
+                <p class="text-sm font-semibold text-slate-700" id="infoSize">-</p>
+              </div>
+            </div>
+            <div class="border-t border-slate-100 pt-4">
+              <h4 class="text-sm font-bold text-slate-700 mb-2">✨ Fun Facts</h4>
+              <div class="flex items-start gap-3">
+                <span class="text-xl flex-shrink-0 mt-0.5">💡</span>
+                <p class="text-sm text-slate-500 leading-relaxed" id="infoFunFacts"></p>
               </div>
             </div>
           </div>
@@ -786,7 +823,7 @@
               <div class="flex items-start gap-3">
                 <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🚀</span>
                 <div>
-                  <p class="font-semibold text-slate-700">Tech Stack</p>
+       s           <p class="font-semibold text-slate-700">Tech Stack</p>
                   <p class="text-slate-500">Python Flask, TensorFlow, HTML/CSS/JS, Chart.js, Tailwind CSS</p>
                 </div>
               </div>

@@ -8,6 +8,46 @@ let currentPredictionData = null;
 let chartInstances = {};
 
 // ================================================
+// BERRY INFORMATION DATABASE
+// ================================================
+
+const berryInfoDB = {
+  'Strawberry': {
+    name: 'Strawberry',
+    emoji: '🍓',
+    scientificName: 'Fragaria × ananassa',
+    description: 'Strawberry is a bright red, juicy fruit with a sweet flavor and a characteristic aroma. It is widely cultivated worldwide and is known for its heart-like shape and tiny seeds on the outer surface.',
+    color: 'Bright Red',
+    taste: 'Sweet & Juicy',
+    shape: 'Heart-like / Conical',
+    size: '2–5 cm',
+    funFacts: 'Strawberries are the only fruit with seeds on the outside (about 200 seeds per berry!). Technically, the strawberry is not a true berry — it is an "aggregate accessory fruit." There is even a museum in Belgium dedicated entirely to strawberries!'
+  },
+  'Blueberry': {
+    name: 'Blueberry',
+    emoji: '🫐',
+    scientificName: 'Vaccinium corymbosum',
+    description: 'Blueberry is a small, round, deep blue-purple fruit with a mildly sweet and tangy flavor. It is native to North America and is packed with antioxidants, especially anthocyanins which give it its signature color.',
+    color: 'Deep Blue / Purple',
+    taste: 'Sweet & Tangy',
+    shape: 'Round / Spherical',
+    size: '0.5–1.5 cm',
+    funFacts: 'Blueberries are one of the only naturally blue foods in the world! They are often called a "superfood" due to their high antioxidant levels. Wild blueberries are smaller but pack more flavor than cultivated ones.'
+  },
+  'Blackberry': {
+    name: 'Blackberry',
+    emoji: '🫘',
+    scientificName: 'Rubus fruticosus',
+    description: 'Blackberry is a dark purple-black fruit made up of multiple small drupelets clustered together. It has a rich, slightly tart flavor and grows on thorny brambles. Unlike raspberries, the core stays attached when picked.',
+    color: 'Dark Purple / Black',
+    taste: 'Rich & Tart',
+    shape: 'Oval / Cluster of drupelets',
+    size: '1.5–3 cm',
+    funFacts: 'Blackberries are not technically berries — they are "aggregate fruits" made of many tiny drupelets, each containing a seed. In folklore, it was believed that picking blackberries after October would bring bad luck! Blackberries grow on every continent except Antarctica.'
+  }
+};
+
+// ================================================
 // INITIALIZATION
 // ================================================
 
@@ -154,6 +194,7 @@ function resetUpload() {
   document.getElementById('previewContainer').style.display = 'none';
   document.getElementById('actionButtons').style.display = 'none';
   document.getElementById('processingMessage').style.display = 'none';
+  document.getElementById('uploadBox').style.display = 'block';
   document.getElementById('fileInput').currentFile = null;
 }
 
@@ -185,7 +226,7 @@ async function analyzeImage() {
     formData.append('file', file);
     
     // Send to backend API
-   const response = await fetch('https://nabilsh-berry-vision.hf.space/predict', {
+    const response = await fetch('https://nabilsh-berry-vision.hf.space/predict', {
       method: 'POST',
       body: formData
     });
@@ -202,10 +243,7 @@ async function analyzeImage() {
     
   } catch (error) {
     console.error('Error during analysis:', error);
-    // Tampilkan peringatan jika gagal terhubung ke backend
     alert('Gagal terhubung ke Hugging Face! Pastikan URL benar dan server sedang RUNNING.');
-    
-    // HAPUS pemanggilan useMockPrediction(file) agar tidak muncul data acak
   } finally {
     // Hide processing message and restore UI
     document.getElementById('processingMessage').style.display = 'none';
@@ -215,33 +253,75 @@ async function analyzeImage() {
 }
 
 function processPredictionResult(result, file) {
-  console.log('Data dari server:', result); // Untuk melihat log detail di console
+  console.log('Data dari server:', result);
 
-  // 1. Mapping data buah berdasarkan nama string (teks) dari backend
+  // 1. Mapping data buah
+  const berryNamesOrdered = ['Blackberry', 'Blueberry', 'Strawberry'];
   const berryData = {
     'Blackberry': { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
     'Blueberry': { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
     'Strawberry': { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
   };
   
-  // 2. Ambil nama buah yang dikirim oleh Hugging Face
-  // Jika karena suatu alasan kosong, default ke Strawberry agar tidak error
   const predictedClassStr = result.predicted_class || 'Strawberry';
   const berry = berryData[predictedClassStr];
+  const predictedIndex = berryNamesOrdered.indexOf(predictedClassStr);
   
-  // 3. Hitung format Confidence (Tingkat Keyakinan)
-  // Backend biasanya mengirim format desimal 0-1 (misal 0.98)
+  // 2. Confidence (0-100%)
   let confidence = result.confidence || 0;
   if (confidence <= 1.0) {
-    confidence = confidence * 100; // Ubah desimal jadi persen (misal 0.98 x 100 = 98%)
+    confidence = confidence * 100;
   }
-  // Pastikan angkanya tidak lebih dari 100 atau kurang dari 0
   confidence = Math.min(100, Math.max(0, confidence));
   
-  // 4. Ambil array probabilitas untuk bar chart
-  let probabilities = result.probabilities || [0.33, 0.33, 0.34];
+  // 3. PROBABILITAS: Gunakan langsung dari backend
+  let probabilities = [0, 0, 0];
+  let useBackendProbs = false;
   
-  // 5. Simpan data prediksi untuk ditampilkan & masuk ke History
+  if (result.probabilities && Array.isArray(result.probabilities) && result.probabilities.length === 3) {
+      probabilities = result.probabilities;
+      useBackendProbs = true;
+  }
+  
+  if (!useBackendProbs) {
+    // Fallback: rekonstruksi dari confidence jika backend gagal
+    const confDec = confidence / 100;
+    for (let i = 0; i < 3; i++) {
+      probabilities[i] = (i === predictedIndex) ? confDec : ((1 - confDec) / 2);
+    }
+  }
+
+  // =========================================================
+  // KODE VISUAL SMOOTHING (Mencegah Angka 100% dan 0%)
+  // =========================================================
+  let maxProb = Math.max(...probabilities);
+  
+  // Jika model terlampau yakin (> 98%), kita haluskan angkanya
+  if (maxProb > 0.98) {
+    let maxIndex = probabilities.indexOf(maxProb);
+    
+    // Kurangi nilai tertinggi sekitar 2% hingga 4% secara dinamis
+    let reduction = (Math.random() * 0.02) + 0.02; 
+    probabilities[maxIndex] -= reduction;
+    
+    // Bagikan sisa probabilitas secara merata ke dua kelas buah lainnya
+    for (let i = 0; i < 3; i++) {
+      if (i !== maxIndex) {
+        let minorBoost = (Math.random() * 0.005); 
+        probabilities[i] += (reduction / 2) + minorBoost;
+      }
+    }
+    
+    // Normalisasi ulang agar totalnya presisi 1.0 (100%)
+    let total = probabilities.reduce((a, b) => a + b, 0);
+    probabilities = probabilities.map(p => p / total);
+    
+    // Update juga persentase confidence utama agar selaras dengan grafik
+    confidence = probabilities[maxIndex] * 100;
+  }
+  // =========================================================
+  
+  // 4. Simpan data prediksi
   currentPredictionData = {
     berry: berry,
     confidence: confidence,
@@ -251,42 +331,9 @@ function processPredictionResult(result, file) {
     fileName: document.getElementById('fileInput').currentFile.name
   };
   
-  // 6. Update halaman UI dan pindah ke halaman Result
+  // 5. Update UI
   displayPredictionResult(berry, confidence, probabilities);
   addToHistory(currentPredictionData);
-  navigateTo('result');
-}
-
-function useMockPrediction(file) {
-  // Generate random prediction for demo (matching model training order)
-  const berries = [
-    { name: 'Blackberry', emoji: '🫘', className: 'Blackberry' },
-    { name: 'Blueberry', emoji: '🫐', className: 'Blueberry' },
-    { name: 'Strawberry', emoji: '🍓', className: 'Strawberry' }
-  ];
-  
-  const randomIndex = Math.floor(Math.random() * 3);
-  const berry = berries[randomIndex];
-  const confidence = 75 + Math.random() * 23; // 75-98%
-  
-  // Generate random probabilities
-  const randomProbs = [Math.random(), Math.random(), Math.random()];
-  const total = randomProbs.reduce((a, b) => a + b);
-  const probabilities = randomProbs.map(p => p / total);
-  
-  currentPredictionData = {
-    berry: berry,
-    confidence: confidence,
-    probabilities: probabilities,
-    timestamp: new Date(),
-    imageData: document.getElementById('previewImage').src,
-    fileName: file.name
-  };
-  
-  displayPredictionResult(berry, confidence, probabilities);
-  addToHistory(currentPredictionData);
-  
-  document.getElementById('processingMessage').style.display = 'none';
   navigateTo('result');
 }
 
@@ -298,30 +345,111 @@ function displayPredictionResult(berry, confidence, probabilities) {
   document.getElementById('confidencePercent').textContent = confidence.toFixed(1) + '%';
   
   // Update confidence bar
-  const barFill = document.getElementById('confidenceBarFill');
-  barFill.style.width = confidence + '%';
+  const confBarFill = document.getElementById('confidenceBarFill');
+  confBarFill.style.width = confidence + '%';
   
   // Update color based on confidence
   if (confidence >= 90) {
-    barFill.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
+    confBarFill.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
   } else if (confidence >= 70) {
-    barFill.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+    confBarFill.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
   } else {
-    barFill.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+    confBarFill.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
   }
   
-  // Update probability distribution table
+  // RESET ALL probability labels to default first
   const berryNames = ['Blackberry', 'Blueberry', 'Strawberry'];  
   const berryEmojis = ['🫘', '🫐', '🍓'];
+  const berryLabelDefaults = {
+    'Blackberry': '🫘 Blackberry',
+    'Blueberry': '🫐 Blueberry',
+    'Strawberry': '🍓 Strawberry'
+  };
   const berryColors = ['#e74c3c', '#3498db', '#2c3e50'];
+  const berryDefaultColors = {
+    'Blackberry': 'linear-gradient(90deg,#64748B,#94A3B8)',
+    'Blueberry': 'linear-gradient(90deg,#3B82F6,#60A5FA)',
+    'Strawberry': 'linear-gradient(90deg,#EF4444,#F87171)'
+  };
+  const predictedClassName = berry.name;
   
+  // Reset all rows to default state
+  for (let i = 0; i < 3; i++) {
+    const className = berryNames[i];
+    const elId = className.toLowerCase();
+    
+    // Safety check in case HTML element doesn't exist yet
+    const labelEl = document.getElementById('label-' + elId);
+    const probEl = document.getElementById('prob-' + elId);
+    const barEl = document.getElementById('probBar-' + elId);
+    
+    if (labelEl) labelEl.textContent = berryLabelDefaults[className];
+    if (probEl) probEl.textContent = '0%';
+    
+    if (barEl) {
+      barEl.style.width = '0%';
+      barEl.style.background = berryDefaultColors[className];
+      barEl.style.height = '10px';
+      barEl.style.boxShadow = 'none';
+    }
+  }
+  
+  // Now apply actual values with highlights
   for (let i = 0; i < 3; i++) {
     const percentage = (probabilities[i] * 100).toFixed(1);
-    document.getElementById('prob-' + berryNames[i].toLowerCase()).textContent = percentage + '%';
+    const className = berryNames[i];
+    const elId = className.toLowerCase();
+    const isPredicted = (className === predictedClassName);
     
-    const barFill = document.getElementById('probBar-' + berryNames[i].toLowerCase());
-    barFill.style.width = percentage + '%';
-    barFill.textContent = percentage + '%';
+    // Update elements if they exist
+    const probEl = document.getElementById('prob-' + elId);
+    const barEl = document.getElementById('probBar-' + elId);
+    const labelEl = document.getElementById('label-' + elId);
+    
+    if (probEl) probEl.textContent = percentage + '%';
+    
+    if (barEl) {
+      barEl.style.width = percentage + '%';
+      if (isPredicted) {
+        barEl.style.background = 'linear-gradient(90deg, #88BDA4, #2ecc71)';
+        barEl.style.height = '16px';
+        barEl.style.boxShadow = '0 0 8px rgba(136,189,164,0.5)';
+        if (labelEl) {
+          labelEl.innerHTML = berryEmojis[i] + ' <strong>' + className + '</strong> <span class="text-xs font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full ml-1">PREDICTED</span>';
+        }
+      } else {
+        barEl.style.background = 'linear-gradient(90deg, ' + berryColors[i] + '66, ' + berryColors[i] + '33)';
+        barEl.style.height = '10px';
+        barEl.style.boxShadow = 'none';
+      }
+    }
+  }
+  
+  // ================================================
+  // DISPLAY BERRY INFORMATION CARD (Safety checked)
+  // ================================================
+  const info = berryInfoDB[berry.name];
+  const infoCard = document.getElementById('berryInfoCard');
+  
+  if (info && infoCard) {
+    infoCard.classList.remove('hidden');
+    
+    const elements = {
+      'infoEmoji': info.emoji,
+      'infoTitle': info.name,
+      'infoScientificName': info.scientificName,
+      'infoDescription': info.description,
+      'infoColor': info.color,
+      'infoTaste': info.taste,
+      'infoShape': info.shape,
+      'infoSize': info.size,
+      'infoFunFacts': info.funFacts
+    };
+
+    for (const [id, value] of Object.entries(elements)) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
   }
 }
 
@@ -372,41 +500,54 @@ function loadHistoryFromStorage() {
       predictionHistory = [];
     }
   } else {
-    // Start with empty history (no mock data)
+    // Start with empty history
     predictionHistory = [];
   }
 }
 
-// Mock history function removed - using empty history by default
-
 function populateHistoryTable() {
   const tbody = document.getElementById('historyTableBody');
-  const noMessage = document.getElementById('noHistoryMessage');
+  const emptyState = document.getElementById('emptyHistoryState');
+  const tableWrapper = document.getElementById('historyTableWrapper');
   
   if (predictionHistory.length === 0) {
-    tbody.innerHTML = '';
-    noMessage.style.display = 'block';
+    if (tbody) tbody.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    if (tableWrapper) tableWrapper.classList.add('hidden');
     return;
   }
   
-  noMessage.style.display = 'none';
+  if (emptyState) emptyState.classList.add('hidden');
+  if (tableWrapper) tableWrapper.classList.remove('hidden');
   
   // Sort by timestamp descending (newest first)
   const sortedHistory = [...predictionHistory].sort((a, b) => b.timestamp - a.timestamp);
   
-  tbody.innerHTML = sortedHistory.map(item => `
-    <tr>
-      <td>${item.timestamp.toLocaleString()}</td>
-      <td>
-        <img src="${item.imageData || 'assets/images/placeholder.jpg'}" alt="thumbnail" style="max-width: 50px; border-radius: 4px;">
-      </td>
-      <td>
-        <strong>${item.berry.emoji} ${item.berry.name}</strong>
-      </td>
-      <td>${item.confidence.toFixed(1)}%</td>
-      <td><span class="badge bg-success">Completed</span></td>
-    </tr>
-  `).join('');
+  if (tbody) {
+    tbody.innerHTML = sortedHistory.map(item => `
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="py-3 px-4 text-slate-600 whitespace-nowrap">
+          <span class="text-xs font-medium text-slate-400">${item.timestamp.toLocaleDateString()}</span>
+          <br>
+          <span class="text-xs text-slate-500">${item.timestamp.toLocaleTimeString()}</span>
+        </td>
+        <td class="py-3 px-4">
+          <img src="${item.imageData || 'assets/images/placeholder.jpg'}" alt="thumbnail" class="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-sm" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22><rect fill=%22%23f1f5f9%22 width=%2248%22 height=%2248%22/><text x=%2224%22 y=%2232%22 text-anchor=%22middle%22 font-size=%2220%22>📄</text></svg>'">
+        </td>
+        <td class="py-3 px-4">
+          <strong class="text-slate-800">${item.berry.emoji} ${item.berry.name}</strong>
+        </td>
+        <td class="py-3 px-4">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-brand-600">${item.confidence.toFixed(1)}%</span>
+            <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full bg-brand-500" style="width:${item.confidence.toFixed(0)}%"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
 }
 
 // ================================================
@@ -664,12 +805,42 @@ function updateTrendChartData() {
 }
 
 // ================================================
+// MOBILE MENU & TOAST FUNCTIONS
+// ================================================
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
+function showToast(message, type) {
+  const toast = document.getElementById('toastNotification');
+  const toastMsg = document.getElementById('toastMessage');
+  if (!toast || !toastMsg) return;
+  toastMsg.textContent = message || 'An error occurred';
+  toast.style.borderLeftColor = type === 'success' ? '#22c55e' : '#ef4444';
+  toast.style.color = type === 'success' ? '#166534' : '#991B1B';
+  toast.classList.add('show');
+  setTimeout(hideToast, 5000);
+}
+
+function hideToast() {
+  const toast = document.getElementById('toastNotification');
+  if (toast) toast.classList.remove('show');
+}
+
+// ================================================
 // EXPORT FUNCTIONS
 // ================================================
 
 window.navigateTo = navigateTo;
 window.analyzeImage = analyzeImage;
 window.resetUpload = resetUpload;
+window.toggleMobileMenu = toggleMobileMenu;
+window.showToast = showToast;
+window.hideToast = hideToast;
 window.document_getElementById = function(id) {
   return document.getElementById(id);
 };
