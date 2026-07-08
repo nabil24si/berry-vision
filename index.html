@@ -208,9 +208,257 @@
     /* Float animation for hero */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-8px); }
     }
-    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-float { animation: float 5s ease-in-out infinite; }
+
+    /* Pulse glow for badges */
+    @keyframes pulseGlow {
+      0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(109, 168, 139, 0.4);
+      }
+      50% { 
+        box-shadow: 0 0 0 8px rgba(109, 168, 139, 0);
+      }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Selection styling */
+    ::selection {
+      background: rgba(136, 189, 164, 0.3);
+      color: #1C6940;
+    }
+
+    /* Glass morphism effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #6DA88B 0%, #88BDA4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Modern button glow */
+    .btn-glow {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn-glow:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Smooth underline animation */
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #6DA88B, #88BDA4);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 80%;
+    }
+
+    /* Enhanced card styling */
+    .enhanced-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,253,247,0.9) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(136, 189, 164, 0.1);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .enhanced-card:hover {
+      border-color: rgba(136, 189, 164, 0.3);
+      box-shadow: 0 20px 40px -12px rgba(109, 168, 139, 0.15);
+    }
+
+    /* Ripple effect for buttons */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .ripple:active::after {
+      width: 200px;
+      height: 200px;
+    }
+
+    /* Bounce animation for icons */
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      70% {
+        transform: scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .bounce-in {
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    /* Shimmer loading effect */
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+    .shimmer {
+      background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    /* Scale pulse for interactive elements */
+    @keyframes scalePulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    .scale-pulse {
+      animation: scalePulse 2s ease-in-out infinite;
+    }
+
+    /* Slide in from bottom */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .slide-in-up {
+      animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Success checkmark animation */
+    @keyframes checkmark {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .checkmark-animation {
+      animation: checkmark 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    /* Counter animation */
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .count-up {
+      animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Interactive hover glow */
+    .hover-glow {
+      transition: all 0.3s ease;
+    }
+    .hover-glow:hover {
+      box-shadow: 0 0 20px rgba(136, 189, 164, 0.3);
+    }
+
+    /* Smooth image zoom on hover */
+    .img-zoom {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .img-zoom:hover {
+      transform: scale(1.1);
+    }
+
+    /* Loading dots animation */
+    @keyframes loadingDots {
+      0%, 100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+    .loading-dot {
+      animation: loadingDots 1.4s ease-in-out infinite;
+    }
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
   </style>
 </head>
 <body>
@@ -218,14 +466,16 @@
   <!-- ============================================ -->
   <!-- TOP NAVIGATION BAR                           -->
   <!-- ============================================ -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+  <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/80 border-b border-slate-200/50 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
 
         <!-- Logo / Brand -->
-        <a href="#" onclick="navigateTo('dashboard'); return false;" class="flex items-center gap-2 text-lg font-bold text-brand-500 no-underline">
-          <span class="text-xl">🍓🫐🫘</span>
-          <span>Berry Vision</span>
+        <a href="#" onclick="navigateTo('dashboard'); return false;" class="flex items-center gap-3 text-lg font-bold text-brand-500 no-underline group">
+          <div class="relative w-10 h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <img src="assets/images/berry-logo.png" alt="Berry Vision Logo" class="w-full h-full object-contain">
+          </div>
+          <span class="text-xl font-bold bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent">Berry Vision</span>
         </a>
 
         <!-- Desktop Navigation Links -->
@@ -280,20 +530,20 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
         <!-- Hero Section -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-6">
+        <div class="text-center max-w-4xl mx-auto mb-20">
+          <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-accent-400/20 text-brand-700 text-sm font-semibold mb-8 border border-brand-200/50 pulse-glow">
             <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
             AI-Powered Classification
           </div>
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-800 leading-tight mb-5">
+          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-800 leading-tight mb-6">
             Discover Your
-            <span class="text-brand-500">Berry Variant</span>
+            <span class="gradient-text">Berry Variant</span>
           </h1>
-          <p class="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Upload a photo of any berry and our deep learning CNN model instantly identifies whether it's a <strong class="text-slate-700">Strawberry</strong>, <strong class="text-slate-700">Blueberry</strong>, or <strong class="text-slate-700">Blackberry</strong> with 98.5% accuracy.
+          <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Upload a photo of any berry and our deep learning CNN model instantly identifies whether it's a <strong class="text-slate-700 font-semibold">Strawberry</strong>, <strong class="text-slate-700 font-semibold">Blueberry</strong>, or <strong class="text-slate-700 font-semibold">Blackberry</strong> with 98.5% accuracy.
           </p>
-          <button class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand-500 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
-            Try the Classifier
+          <button class="ripple btn-glow inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-base shadow-xl shadow-brand-500/30 hover:shadow-2xl hover:shadow-brand-500/40 hover:scale-105 transition-all duration-300" onclick="navigateTo('upload')">
+            <span>Try the Classifier</span>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
             </svg>
@@ -303,22 +553,22 @@
         <!-- Public Statistics Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <!-- Metric Card: Total Data Analyzed -->
-          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 hover:shadow-lg transition-shadow duration-200">
+          <div class="enhanced-card rounded-2xl p-6 sm:p-8 hover-glow cursor-pointer">
             <div class="flex items-start gap-5">
-              <div class="w-14 h-14 rounded-xl bg-brand-50 flex items-center justify-center text-2xl flex-shrink-0">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-2xl flex-shrink-0 shadow-lg shadow-brand-500/20 hover:scale-110 transition-transform duration-300">
                 📊
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Data Analyzed</p>
-                <p class="text-3xl sm:text-4xl font-extrabold text-slate-800" id="total-analyzed">1,284</p>
+                <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Data Analyzed</p>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-800 count-up" id="total-analyzed">1,284</p>
                 <p class="text-sm text-slate-400 mt-1">images processed</p>
               </div>
             </div>
           </div>
 
           <!-- Chart Card: Prediction Summary -->
-          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-6 sm:p-8 hover:shadow-lg transition-shadow duration-200">
-            <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Prediction Summary</p>
+          <div class="enhanced-card rounded-2xl p-6 sm:p-8 hover-glow cursor-pointer">
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Prediction Summary</p>
             <div class="flex items-center justify-center" style="height:200px;">
               <canvas id="predictionChart"></canvas>
             </div>
@@ -327,25 +577,25 @@
 
         <!-- Quick Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
-            <span class="text-2xl">🍓</span>
+          <div class="enhanced-card rounded-xl px-5 py-4 flex items-center gap-4 group cursor-pointer hover-glow">
+            <div class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">🍓</div>
             <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Strawberry</p>
-              <p class="text-xl font-bold text-slate-800" id="count-strawberry">578</p>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Strawberry</p>
+              <p class="text-xl font-bold text-slate-800 count-up" id="count-strawberry">578</p>
             </div>
           </div>
-          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
-            <span class="text-2xl">🫐</span>
+          <div class="enhanced-card rounded-xl px-5 py-4 flex items-center gap-4 group cursor-pointer hover-glow">
+            <div class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">🫐</div>
             <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Blueberry</p>
-              <p class="text-xl font-bold text-slate-800" id="count-blueberry">451</p>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Blueberry</p>
+              <p class="text-xl font-bold text-slate-800 count-up" id="count-blueberry">451</p>
             </div>
           </div>
-          <div class="bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] px-5 py-4 flex items-center gap-4">
-            <span class="text-2xl">🫘</span>
+          <div class="enhanced-card rounded-xl px-5 py-4 flex items-center gap-4 group cursor-pointer hover-glow">
+            <div class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">🫘</div>
             <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Blackberry</p>
-              <p class="text-xl font-bold text-slate-800" id="count-blackberry">255</p>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Blackberry</p>
+              <p class="text-xl font-bold text-slate-800 count-up" id="count-blackberry">255</p>
             </div>
           </div>
         </div>
@@ -521,35 +771,44 @@
         </div>
 
         <!-- Upload Card -->
-        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 sm:p-10">
+        <div class="enhanced-card rounded-2xl p-8 sm:p-10">
 
           <!-- Dropzone -->
-          <div id="uploadBox" class="dropzone border-2 border-dashed border-slate-200 rounded-xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-200 hover:border-brand-300 hover:bg-brand-50/30"
+          <div id="uploadBox" class="dropzone border-2 border-dashed border-slate-300 rounded-xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-300 hover:border-brand-400 hover:bg-brand-50/20 relative overflow-hidden"
                onclick="document.getElementById('fileInput').click()">
-            <div class="text-5xl mb-4">📤</div>
-            <h3 class="text-xl font-semibold text-slate-700 mb-2">Drag and drop your berry image here</h3>
-            <p class="text-sm text-slate-400 mb-6">or click to Browse (Supports JPG, PNG)</p>
-            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
-            <button class="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="event.stopPropagation(); document.getElementById('fileInput').click();">
-              Browse File
-            </button>
+            <div class="absolute inset-0 bg-gradient-to-br from-brand-50/0 to-accent-400/0 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative z-10">
+              <div class="text-6xl mb-4 animate-float">📤</div>
+              <h3 class="text-xl font-semibold text-slate-700 mb-2">Drag and drop your berry image here</h3>
+              <p class="text-sm text-slate-400 mb-6">or click to Browse (Supports JPG, PNG)</p>
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+              <button class="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-all duration-200 hover:scale-105" onclick="event.stopPropagation(); document.getElementById('fileInput').click();">
+                Browse File
+              </button>
+            </div>
           </div>
 
           <!-- Preview Section (hidden) -->
           <div id="previewContainer" class="hidden space-y-5">
-            <h3 class="font-semibold text-slate-700">Selected Image</h3>
-            <div class="bg-slate-50 rounded-xl p-4 flex items-center justify-center min-h-[260px]">
-              <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[300px] rounded-lg shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-slate-700">Selected Image</h3>
+              <span class="text-xs text-slate-400" id="fileName"></span>
             </div>
-            <p class="text-sm text-slate-400" id="fileName"></p>
+            <div class="bg-slate-50 rounded-xl p-4 flex items-center justify-center min-h-[260px] relative overflow-hidden group">
+              <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[300px] rounded-lg shadow-sm group-hover:scale-105 transition-transform duration-300">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+            </div>
 
             <!-- Action Buttons -->
             <div id="actionButtons" class="hidden space-y-3">
-              <button id="analyzeBtn" class="w-full py-3.5 rounded-xl bg-brand-500 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" onclick="analyzeImage()">
+              <button id="analyzeBtn" class="btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2" onclick="analyzeImage()">
                 <span id="analyzeBtnSpinner" class="hidden spinner w-5 h-5 border-2"></span>
-                Run Prediction
+                <span>Run Prediction</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
               </button>
-              <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="resetUpload()">
+              <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-all duration-200 hover:scale-105" onclick="resetUpload()">
                 Change Image
               </button>
             </div>
@@ -557,9 +816,18 @@
 
           <!-- Loading / Processing State (hidden) -->
           <div id="processingMessage" class="hidden text-center py-10">
-            <div class="spinner mx-auto mb-5"></div>
-            <p class="text-lg font-semibold text-slate-700 mb-1">Analyzing image...</p>
+            <div class="relative w-20 h-20 mx-auto mb-6">
+              <div class="absolute inset-0 rounded-full border-4 border-brand-200"></div>
+              <div class="absolute inset-0 rounded-full border-4 border-brand-500 border-t-transparent animate-spin"></div>
+              <div class="absolute inset-0 flex items-center justify-center text-2xl">🔍</div>
+            </div>
+            <p class="text-lg font-semibold text-slate-700 mb-2">Analyzing image...</p>
             <p class="text-sm text-slate-400">This may take up to 10 seconds</p>
+            <div class="mt-4 flex items-center justify-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-brand-500 animate-bounce" style="animation-delay: 0s"></span>
+              <span class="w-2 h-2 rounded-full bg-brand-500 animate-bounce" style="animation-delay: 0.2s"></span>
+              <span class="w-2 h-2 rounded-full bg-brand-500 animate-bounce" style="animation-delay: 0.4s"></span>
+            </div>
           </div>
 
         </div>
@@ -608,10 +876,13 @@
               </div>
 
               <div class="flex flex-col gap-3">
-                <button class="w-full py-3 rounded-xl bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 hover:bg-brand-600 transition-all duration-200" onclick="navigateTo('upload')">
-                  Analyze Another
+                <button class="ripple btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-semibold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2" onclick="navigateTo('upload')">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  Analyze Another Image
                 </button>
-                <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-colors" onclick="navigateTo('history')">
+                <button class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-brand-300 hover:text-brand-500 transition-all duration-200 hover:scale-105" onclick="navigateTo('history')">
                   View History
                 </button>
               </div>
@@ -766,64 +1037,70 @@
         <!-- Biodata Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
           <!-- Member 1: Nabil -->
-          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 text-center hover:shadow-lg transition-shadow duration-200 border border-slate-100">
-            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-400 to-accent-500 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-5 shadow-lg shadow-brand-500/20">
-              N
+          <div class="enhanced-card rounded-2xl p-8 text-center group cursor-pointer">
+            <div class="relative w-28 h-28 mx-auto mb-5 rounded-full overflow-hidden ring-4 ring-brand-200 group-hover:ring-brand-400 transition-all duration-300 shadow-xl">
+              <img src="assets/images/nabil.jpeg" alt="Nabil Sahendra" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             </div>
-            <h3 class="text-xl font-bold text-slate-800 mb-1">Nabil Sahendra</h3>
+            <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-brand-600 transition-colors">Nabil Sahendra</h3>
             <p class="text-sm text-brand-500 font-semibold mb-1">Data Mining Practicum</p>
-            <p class="text-sm text-slate-400 mb-4">Frontend Developer & System Integrator</p>
-            <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
-              <span class="inline-flex items-center gap-1">📧 nabil@example.com</span>
+            <p class="text-sm text-slate-400 mb-4">Frontend and Backend Developer & System Integrator</p>
+            <div class="flex items-center justify-center gap-3 text-xs text-slate-400">
+              <span class="inline-flex items-center gap-1 hover:text-brand-500 transition-colors">📧 nabilsahendra2006@gmail</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <p class="text-xs text-slate-500 leading-relaxed">Passionate about creating intuitive user interfaces and seamless user experiences.</p>
             </div>
           </div>
 
-          <!-- Member 2: Mickel -->
-          <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 text-center hover:shadow-lg transition-shadow duration-200 border border-slate-100">
-            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-400 to-accent-500 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-5 shadow-lg shadow-brand-500/20">
-              D
+          <!-- Member 2: Della -->
+          <div class="enhanced-card rounded-2xl p-8 text-center group cursor-pointer">
+            <div class="relative w-28 h-28 mx-auto mb-5 rounded-full overflow-hidden ring-4 ring-brand-200 group-hover:ring-brand-400 transition-all duration-300 shadow-xl">
+              <img src="assets/images/della.jpeg" alt="Della Marcellina" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             </div>
-            <h3 class="text-xl font-bold text-slate-800 mb-1">Della Marcellina</h3>
+            <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-brand-600 transition-colors">Della Marcellina</h3>
             <p class="text-sm text-brand-500 font-semibold mb-1">Data Mining Practicum</p>
-            <p class="text-sm text-slate-400 mb-4">Backend Developer & Model Engineer</p>
-            <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
-              <span class="inline-flex items-center gap-1">📧 della@example.com</span>
+            <p class="text-sm text-slate-400 mb-4">UI/UX Designer & Model Engineer</p>
+            <div class="flex items-center justify-center gap-3 text-xs text-slate-400">
+              <span class="inline-flex items-center gap-1 hover:text-brand-500 transition-colors">📧 della@example.com</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <p class="text-xs text-slate-500 leading-relaxed">Expert in machine learning and deep learning model optimization.</p>
             </div>
           </div>
         </div>
 
         <!-- Project Summary -->
-        <div class="bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-8 border border-slate-100">
-          <h3 class="text-lg font-bold text-slate-800 mb-4 text-center">📋 Project Overview</h3>
+        <div class="enhanced-card rounded-2xl p-8">
+          <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">📋 Project Overview</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-            <div class="space-y-3">
-              <div class="flex items-start gap-3">
-                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🎯</span>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3 group">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">🎯</span>
                 <div>
                   <p class="font-semibold text-slate-700">Objective</p>
                   <p class="text-slate-500">Classify 3 types of berries using deep learning CNN</p>
                 </div>
               </div>
-              <div class="flex items-start gap-3">
-                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">📊</span>
+              <div class="flex items-start gap-3 group">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">📊</span>
                 <div>
                   <p class="font-semibold text-slate-700">Dataset</p>
                   <p class="text-slate-500">1,284 labeled berry images (Strawberry, Blueberry, Blackberry)</p>
                 </div>
               </div>
             </div>
-            <div class="space-y-3">
-              <div class="flex items-start gap-3">
-                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🧠</span>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3 group">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">🧠</span>
                 <div>
                   <p class="font-semibold text-slate-700">Model</p>
                   <p class="text-slate-500">Custom CNN with 3 convolutional layers, 98.5% training accuracy</p>
                 </div>
               </div>
-              <div class="flex items-start gap-3">
-                <span class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">🚀</span>
+              <div class="flex items-start gap-3 group">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">🚀</span>
                 <div>
-       s           <p class="font-semibold text-slate-700">Tech Stack</p>
+                  <p class="font-semibold text-slate-700">Tech Stack</p>
                   <p class="text-slate-500">Python Flask, TensorFlow, HTML/CSS/JS, Chart.js, Tailwind CSS</p>
                 </div>
               </div>
@@ -839,16 +1116,18 @@
   <!-- ============================================ -->
   <!-- FOOTER                                       -->
   <!-- ============================================ -->
-  <footer class="bg-white border-t border-slate-200 py-8">
+  <footer class="relative mt-20 bg-gradient-to-br from-slate-50 to-brand-50/30 border-t border-slate-200/50 py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="flex items-center justify-center gap-2 text-lg mb-3">
-        <span>🍓🫐🫘</span>
-        <span class="font-bold text-brand-500">Berry Vision</span>
+      <div class="flex items-center justify-center gap-3 text-lg mb-4">
+        <div class="w-10 h-10 flex items-center justify-center">
+          <img src="assets/images/berry-logo.png" alt="Berry Vision Logo" class="w-full h-full object-contain">
+        </div>
+        <span class="font-bold gradient-text text-xl">Berry Vision</span>
       </div>
-      <p class="text-sm text-slate-400">
+      <p class="text-sm text-slate-500 mb-2">
         Copyright &copy; 2026 Data Mining Practicum. All rights reserved.
       </p>
-      <p class="text-xs text-slate-300 mt-1">
+      <p class="text-xs text-slate-400">
         Built with ❤️ for academic purposes &mdash; Image Classification using CNN
       </p>
     </div>

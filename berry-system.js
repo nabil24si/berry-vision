@@ -97,6 +97,11 @@ function navigateTo(page) {
         initializeDashboardCharts();
         updateDashboardStats();
       }, 100);
+    } else if (page === 'upload') {
+      // Reset upload form when navigating to upload page
+      setTimeout(() => {
+        resetUpload();
+      }, 100);
     }
     
     // Scroll to top
